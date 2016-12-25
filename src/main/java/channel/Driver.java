@@ -18,12 +18,17 @@ public class Driver {
 		ResultSet results = new ResultSet();
 		
 		for (int i = 0; i < runs; i++) {
-			String signal = generator.generate(length);
+			StringBuilder s = new StringBuilder();
+			for (int l = 0; l < length; l++) {
+				s.append((String)generator.generate()); 
+			}
+			String signal = s.toString();
 			String encoded = encoder.encode(signal);
 			String recieved = channel.send(encoded);
 			String decoded = decoder.decode(recieved);
 			results.add(new Result(signal, encoded, recieved, decoded));
 		}		
+		results.computeStats();
 		return results;
 	}
 	
