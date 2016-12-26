@@ -18,13 +18,25 @@ public class Ensemble<T> implements IGenerator {
 	
 	private Map<T,Double> probabilityOf = new HashMap<T,Double>();
 	
-	public Ensemble( Random randomVariable, T[] alphabet, double[] probabilityDistribution ) {
+	public Ensemble( Random randomVariable, T[] alphabet, double[] probabilityDistribution ) throws NotAProbabilityDistribution {
+		
+		checkDistribution(probabilityDistribution);
+		
 		this.randomVariable = randomVariable;
 		this.alphabet = alphabet;
 		this.distrib = probabilityDistribution;
 		for (int i = 0; i < alphabet.length; i++) {
 			probabilityOf.put(this.alphabet[i], this.distrib[i]);
 		}
+	}
+	
+	private void checkDistribution(double[] probabilityDistribution) throws NotAProbabilityDistribution {
+		double total = 0; 
+		for (double prob: probabilityDistribution) {
+			total += prob;
+		}
+		if (total < 0.9999999) throw new NotAProbabilityDistribution();
+		if (total > 1.0000001) throw new NotAProbabilityDistribution();
 	}
 	
 	/**
@@ -42,9 +54,10 @@ public class Ensemble<T> implements IGenerator {
 	 * @return Shannon information content for symbol in bits
 	 */
 	public double informationOfOccurence(T symbol) {
-		return log.value(1/probabilityOfOccurence(symbol))/log.value(2);
+		double info =  log.value(1/probabilityOfOccurence(symbol))/log.value(2);
+		if (Double.isFinite(info)) {return info;} else {return (double)0.0;}
 	}
-
+	
 	/**
 	 * Shannon entropy is the average information content for the Ensemble
 	 * @return the Shannon entropy of the Ensemble in bits
@@ -52,9 +65,9 @@ public class Ensemble<T> implements IGenerator {
 	public double entropy() {
 		double entropy = 0;
 		for (T symbol : alphabet ) {
-			entropy += informationOfOccurence(symbol);
+			entropy += ( informationOfOccurence(symbol) * probabilityOfOccurence(symbol));
 		}
-		return entropy/(double)alphabet.length;
+		return entropy;
 	}
 	
 	// TODO implement hash function using arithmetic coding

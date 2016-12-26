@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 
 import channel.*;
 import theory.Ensemble;
+import theory.NotAProbabilityDistribution;
 
 public class ChannelTest {
 	
@@ -67,7 +68,7 @@ public class ChannelTest {
 	}
 
 	@Test
-	public void runBentCoinEnsemble() {
+	public void runBentCoinEnsemble() throws NotAProbabilityDistribution {
 		
 		System.out.println("Running Bent Coin Using Ensemble");
 		

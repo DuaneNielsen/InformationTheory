@@ -7,11 +7,12 @@ import java.util.Random;
 import org.junit.Test;
 
 import theory.Ensemble;
+import theory.NotAProbabilityDistribution;
 
 public class EnsembleTest {
 
 	@Test
-	public void test() {
+	public void test() throws NotAProbabilityDistribution {
 		
 		String[] coin = {"0","1"};
 		double[] distrib = {0.9,0.1};
