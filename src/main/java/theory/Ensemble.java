@@ -1,6 +1,10 @@
 package theory;
 
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+
 import org.apache.commons.math3.analysis.function.Log;
 
 import channel.IGenerator;
@@ -11,20 +15,23 @@ public class Ensemble<T> implements IGenerator {
 	// distribution representing the likelihood of occurrence of the letter of
 	// the alphabet in a sequence
 
-	private Random randomVariable;
-	private T[] alphabet;
-	private double[] distrib;
+	protected Random randomVariable;
+	protected T[] alphabet;
+	protected double[] distrib;
 	private Log log = new Log();
 	
 	private Map<T,Double> probabilityOf = new HashMap<T,Double>();
 	
 	public Ensemble( Random randomVariable, T[] alphabet, double[] probabilityDistribution ) throws NotAProbabilityDistribution {
-		
-		checkDistribution(probabilityDistribution);
-		
 		this.randomVariable = randomVariable;
 		this.alphabet = alphabet;
 		this.distrib = probabilityDistribution;
+		init();
+	}
+	
+	public void init() throws NotAProbabilityDistribution {
+		checkDistribution(this.distrib);
+		probabilityOf = new HashMap<T,Double>();
 		for (int i = 0; i < alphabet.length; i++) {
 			probabilityOf.put(this.alphabet[i], this.distrib[i]);
 		}
@@ -83,10 +90,55 @@ public class Ensemble<T> implements IGenerator {
 		}
 		return alphabet[i];
 	}
+
+	public Random getRandomVariable() {
+		return randomVariable;
+	}
+
+	public void setRandomVariable(Random randomVariable) {
+		this.randomVariable = randomVariable;
+	}
+
+	public T[] getAlphabet() {
+		return alphabet;
+	}
+
+	public void setAlphabet(T[] alphabet) {
+		this.alphabet = alphabet;
+	}
+
+	public void setAlphabet(List<T> alphabet) {
+		this.alphabet = (T[]) alphabet.toArray();
+	}
 	
-//	Object getOccurence() {
+	
+	public double[] getDistrib() {
+		return distrib;
+	}
+
+	public List<Double> getDistribAsList() {
+		return DoubleStream.of(distrib).boxed().collect(Collectors.toList());
+	}
+	
+	
+	public void setDistrib(double[] distrib) {
+		this.distrib = distrib;
+	}
+
+	public void setDistrib(List<Double> distrib) {
+		this.distrib = distrib.stream().mapToDouble(i->i).toArray();
+	}
+
+	public List<T> getAlphabetAsList() {
+		// TODO Auto-generated method stub
+		return new ArrayList<T>(Arrays.asList(alphabet));
+	}
+
+
+	//	Object getOccurence() {
 //		double random = randomVariable.nextDouble();
 //		
 //	}
 
+	
 }
