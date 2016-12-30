@@ -1,10 +1,8 @@
 package weighingproblem;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import theory.Ensemble;
+import theory.EnsembleOld;
 import theory.NotAProbabilityDistribution;
 
 public class WeighStrategy {
@@ -16,8 +14,8 @@ public class WeighStrategy {
 		double entropy = 0;
 		WeighResult[] alphabet = { WeighResult.LEFT_LIGHT, WeighResult.EQUAL, WeighResult.RIGHT_LIGHT };
 		double[] distribution = { (6.0 / 12.0), 0.0, (6.0 / 12.0) };
-		Ensemble<WeighResult> ballsEnsemble;
-		ballsEnsemble = new Ensemble<WeighResult>(new Random(), alphabet, distribution);
+		EnsembleOld<WeighResult> ballsEnsemble;
+		ballsEnsemble = new EnsembleOld<WeighResult>(new Random(), alphabet, distribution);
 		entropy = ballsEnsemble.entropy();
 		return entropy;
 	}
@@ -25,7 +23,7 @@ public class WeighStrategy {
 	public double entropyOf5v5Step() throws NotAProbabilityDistribution {
 		WeighResult[] alphabet = { WeighResult.LEFT_LIGHT, WeighResult.EQUAL, WeighResult.RIGHT_LIGHT };
 		double[] distribution = { (5.0 / 12.0), (2.0 / 12.0), (5.0 / 12.0) };
-		Ensemble<WeighResult> ballsEnsemble = new Ensemble<WeighResult>(new Random(), alphabet, distribution);
+		EnsembleOld<WeighResult> ballsEnsemble = new EnsembleOld<WeighResult>(new Random(), alphabet, distribution);
 		double entropy = ballsEnsemble.entropy();
 		return entropy;
 	}
@@ -33,7 +31,7 @@ public class WeighStrategy {
 	public double entropyOf4v4Step() throws NotAProbabilityDistribution {
 		WeighResult[] alphabet = { WeighResult.LEFT_LIGHT, WeighResult.EQUAL, WeighResult.RIGHT_LIGHT };
 		double[] distribution = { (4.0 / 12.0), (4.0 / 12), (4.0 / 12.0) };
-		Ensemble<WeighResult> ballsEnsemble = new Ensemble<WeighResult>(new Random(), alphabet, distribution);
+		EnsembleOld<WeighResult> ballsEnsemble = new EnsembleOld<WeighResult>(new Random(), alphabet, distribution);
 		double entropy = ballsEnsemble.entropy();
 		return entropy;
 	}
@@ -41,7 +39,7 @@ public class WeighStrategy {
 	public double entropyOf3v3Step() throws NotAProbabilityDistribution {
 		WeighResult[] alphabet = { WeighResult.LEFT_LIGHT, WeighResult.EQUAL, WeighResult.RIGHT_LIGHT };
 		double[] distribution = { (3.0 / 12.0), (6.0 / 12.0), (3.0 / 12.0) };
-		Ensemble<WeighResult> ballsEnsemble = new Ensemble<WeighResult>(new Random(), alphabet, distribution);
+		EnsembleOld<WeighResult> ballsEnsemble = new EnsembleOld<WeighResult>(new Random(), alphabet, distribution);
 		double entropy = ballsEnsemble.entropy();
 		return entropy;
 	}
@@ -70,7 +68,7 @@ public class WeighStrategy {
 				/ (double) ballsWithUnknownProperties;
 
 		double[] distribution = { prob_left_heavy, prob_balanced, prob_right_heavy };
-		Ensemble<WeighResult> ballsEnsemble = new Ensemble<WeighResult>(new Random(), alphabet, distribution);
+		EnsembleOld<WeighResult> ballsEnsemble = new EnsembleOld<WeighResult>(new Random(), alphabet, distribution);
 		double entropy = ballsEnsemble.entropy();
 		return entropy;
 	}

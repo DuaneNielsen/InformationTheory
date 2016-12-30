@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 
 import channel.*;
-import theory.Ensemble;
+import theory.EnsembleOld;
 import theory.NotAProbabilityDistribution;
 
 public class ChannelTest {
@@ -77,7 +77,7 @@ public class ChannelTest {
 		// set up a bent coin using generic Ensemble notation
 		String[] coin = {"0","1"};  // alphabet
 		double[] distrib = {0.9,0.1}; // distribution
-		Ensemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
+		EnsembleOld<String> bentCoin = new EnsembleOld<String>(new Random(), coin, distrib);
 		
 		driver.generator = bentCoin;
 		driver.channel = new BinaryChannel(0.1);

@@ -1,46 +1,52 @@
 package theory;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 
 import org.apache.commons.math3.analysis.function.Log;
 
 import channel.IGenerator;
 
-public class Ensemble<T> implements IGenerator {
+public class Ensemble<T extends Comparable<T>> implements IGenerator {
 
 	// An Ensemble is a random variable, a finite alphabet, and a probability
 	// distribution representing the likelihood of occurrence of the letter of
 	// the alphabet in a sequence
 
 	protected Random randomVariable;
-	protected T[] alphabet;
-	protected double[] distrib;
+	protected List<Symbol<T>> alphabet = new ArrayList<Symbol<T>>();
 	private Log log = new Log();
+	private Map<T,Symbol<T>> map = new HashMap<T,Symbol<T>>();
 	
-	private Map<T,Double> probabilityOf = new HashMap<T,Double>();
+	public Ensemble( Random randomVariable, T[] alphabet, double[] probabilityDistribution ) throws NotAProbabilityDistribution {		
+		this.randomVariable = randomVariable;		
+		for (int i = 0; i < alphabet.length; i++) {
+			this.alphabet.add(new Symbol<T>(alphabet[i], probabilityDistribution[i]));
+		}
+		init();
+	}
 	
-	public Ensemble( Random randomVariable, T[] alphabet, double[] probabilityDistribution ) throws NotAProbabilityDistribution {
-		this.randomVariable = randomVariable;
-		this.alphabet = alphabet;
-		this.distrib = probabilityDistribution;
+	public Ensemble( Random randomVariable, List<Symbol<T>> symbols ) throws NotAProbabilityDistribution {		
+		this.randomVariable = randomVariable;		
+		this.alphabet = symbols;
 		init();
 	}
 	
 	public void init() throws NotAProbabilityDistribution {
-		checkDistribution(this.distrib);
-		probabilityOf = new HashMap<T,Double>();
-		for (int i = 0; i < alphabet.length; i++) {
-			probabilityOf.put(this.alphabet[i], this.distrib[i]);
+		checkDistribution();
+		generateMap();
+	}
+
+	protected void generateMap() {
+		map = new HashMap<T,Symbol<T>>();
+		for (Symbol<T> symbol: this.alphabet) {
+			map.put(symbol.getSymbol(), symbol);
 		}
 	}
 	
-	private void checkDistribution(double[] probabilityDistribution) throws NotAProbabilityDistribution {
+	protected void checkDistribution() throws NotAProbabilityDistribution {
 		double total = 0; 
-		for (double prob: probabilityDistribution) {
-			total += prob;
+		for (Symbol<T> symbol: this.alphabet) {
+			total += symbol.getProbability();
 		}
 		if (total < 0.9999999) throw new NotAProbabilityDistribution();
 		if (total > 1.0000001) throw new NotAProbabilityDistribution();
@@ -48,11 +54,29 @@ public class Ensemble<T> implements IGenerator {
 	
 	/**
 	 * The probability of occurrence of a symbol in the ensemble
-	 * @param symbol
+	 * @param symbol type
 	 * @return the probability of the occurrence of symbol
 	 */
 	public double probabilityOfOccurence(T symbol) {
-		return probabilityOf.get(symbol);
+		return map.get(symbol).getProbability();
+	}
+	
+	/**
+	 * The probability of occurrence of a symbol in the ensemble
+	 * @param the actual symbol (just a bit of sugar)
+	 * @return the probability of the occurrence of symbol
+	 */
+	public double probabilityOfOccurence(Symbol<T> symbol) {
+		return map.get(symbol.getSymbol()).getProbability();
+	}
+	
+	/**
+	 * The probability of occurrence of a symbol in the ensemble
+	 * @param symbol
+	 * @return the probability of the occurrence of symbol
+	 */	
+	public double informationOfOccurence(Symbol<T> symbol) {
+		return informationOfOccurence(symbol.getSymbol());
 	}
 	
 	/**
@@ -71,7 +95,7 @@ public class Ensemble<T> implements IGenerator {
 	 */
 	public double entropy() {
 		double entropy = 0;
-		for (T symbol : alphabet ) {
+		for (Symbol<T> symbol : alphabet ) {
 			entropy += ( informationOfOccurence(symbol) * probabilityOfOccurence(symbol));
 		}
 		return entropy;
@@ -80,17 +104,27 @@ public class Ensemble<T> implements IGenerator {
 	// TODO implement hash function using arithmetic coding
 	// the below simply starts from the first on the list and moves along the list in order
 	// this is Order N, but we should be able to do Order 1 or close to it....
-	public T generate() {
+	public Symbol<T> generate() {
 		double randomValue = randomVariable.nextDouble();
-		double interval = distrib[0];
-		int i = 0;
+		Iterator<Symbol<T>> iter = alphabet.iterator();
+		Symbol<T> symbol = iter.next();
+		double interval = symbol.getProbability();
 		while (randomValue > interval ) {
-			interval += distrib[i];
-			i++;
+			symbol = iter.next();
+			interval += symbol.getProbability();
 		}
-		return alphabet[i];
+		return symbol;
 	}
 
+	/**
+	 * returns a IntervalSet in the form { ( a, 0 - P(a) ), ( b, P(a) - P(a) + P(b) ) ... }
+	 * where P(a) = the probability of symbol a
+	 * @return
+	 */
+	public IntervalSet<T> toInterval() {
+		return new IntervalSet<T>(this);
+	}
+	
 	public Random getRandomVariable() {
 		return randomVariable;
 	}
@@ -99,46 +133,32 @@ public class Ensemble<T> implements IGenerator {
 		this.randomVariable = randomVariable;
 	}
 
-	public T[] getAlphabet() {
+	public List<Symbol<T>> getAlphabet() {
 		return alphabet;
 	}
 
-	public void setAlphabet(T[] alphabet) {
+	public void setAlphabet(List<Symbol<T>> alphabet) throws NotAProbabilityDistribution {
 		this.alphabet = alphabet;
-	}
-
-	public void setAlphabet(List<T> alphabet) {
-		this.alphabet = (T[]) alphabet.toArray();
+		init();
 	}
 	
-	
-	public double[] getDistrib() {
-		return distrib;
-	}
-
-	public List<Double> getDistribAsList() {
-		return DoubleStream.of(distrib).boxed().collect(Collectors.toList());
+	public Symbol<T> findSymbol(T key) {
+		return map.get(key);
 	}
 	
+	public Symbol<T> findSymbol(Symbol<T> key) {
+		return map.get(key.getSymbol());
+	}
+		
 	
-	public void setDistrib(double[] distrib) {
-		this.distrib = distrib;
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for (Symbol<T> symbol : this.getAlphabet()) {
+			sb.append(symbol); 
+		}
+		sb.append("}");
+		return sb.toString();
 	}
-
-	public void setDistrib(List<Double> distrib) {
-		this.distrib = distrib.stream().mapToDouble(i->i).toArray();
-	}
-
-	public List<T> getAlphabetAsList() {
-		// TODO Auto-generated method stub
-		return new ArrayList<T>(Arrays.asList(alphabet));
-	}
-
-
-	//	Object getOccurence() {
-//		double random = randomVariable.nextDouble();
-//		
-//	}
-
 	
 }

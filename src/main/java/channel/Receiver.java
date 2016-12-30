@@ -13,7 +13,6 @@ public class Receiver implements IReceiver {
 	}
 
 	public String getRecievedSignal() {
-		// TODO Auto-generated method stub
 		return receivedSignal;
 	}
 	

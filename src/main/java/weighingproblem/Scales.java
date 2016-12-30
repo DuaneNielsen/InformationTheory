@@ -1,8 +1,8 @@
 package weighingproblem;
 
-import java.util.*;
-
-import theory.Ensemble;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Scales {
 	
