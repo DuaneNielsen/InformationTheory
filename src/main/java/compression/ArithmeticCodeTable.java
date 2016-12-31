@@ -101,9 +101,6 @@ public class ArithmeticCodeTable<S extends Comparable<S>> {
 				outputInterval = this.intervalOf(child);
 
 				if (outputInterval.isContainedBy(inputInterval)) {
-//					System.out.println();
-//					System.out.println(inputInterval + " " +  outputInterval);
-//					System.out.println(inputInterval.length() - outputInterval.length());
 					return child;
 				}
 				// slip to the side with the larger overlap
@@ -119,4 +116,34 @@ public class ArithmeticCodeTable<S extends Comparable<S>> {
 		}
 	}
 
+	TrieElement<Symbol<S>> findProbableElementAtDepth(Interval<?> inputInterval, Ensemble<S> ensemble, int depth) {
+		TrieElement<Symbol<S>> current = predictor.getRoot();
+		//TrieElement<Symbol<S>> sideWithMostOverlap = null;
+
+		Interval<S> outputInterval = null;
+
+		for (int i = 0; i < depth; i++) {
+			// double maxOverlap = 0.0;
+			this.spawnAllChildren(current, ensemble);
+			for (TrieElement<Symbol<S>> child : current.getChildren()) {
+				outputInterval = this.intervalOf(child);
+
+				if (outputInterval.contains(inputInterval)) {
+					current =  child;
+				}
+//				// slip to the side with the larger overlap
+//				if (outputInterval.overlaps(inputInterval)) {
+//					double overlap = outputInterval.overlap(inputInterval);
+//					if (overlap > maxOverlap) {
+//						maxOverlap = overlap;
+//						sideWithMostOverlap = child;
+//					}
+//				}
+			}
+			//current = sideWithMostOverlap;
+		}
+		return current;
+	}
+	
+	
 }

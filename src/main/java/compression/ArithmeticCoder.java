@@ -20,7 +20,7 @@ public class ArithmeticCoder {
 	
 	public String compress(String input) {
 		
-		List<Symbol<String>> inputWord = word(input);
+		List<Symbol<String>> inputWord = word(input, ensemble);
 		TrieElement<Symbol<String>> inputElement = predictor.findWord(inputWord, ensemble);
 		Interval<String> inputInterval = predictor.intervalOf(inputElement);
 		TrieElement<Symbol<String>> binaryElement = bct.findBinaryElement(inputInterval);
@@ -28,17 +28,17 @@ public class ArithmeticCoder {
 		return toString(compressedWord);
 	}
 	
-	public String decompress(String compressed) {
+	public String decompress(String compressed, int length) {
 		
-		List<Symbol<String>> binaryWord = word(compressed);
+		List<Symbol<String>> binaryWord = word(compressed,bct.binaryEnsemble);
 		TrieElement<Symbol<String>> compressedElement = bct.findWord(binaryWord, bct.binaryEnsemble);
 		Interval<String> compressedInterval = bct.intervalOf(compressedElement);
-		TrieElement<Symbol<String>> decompressedLeaf = predictor.findBinaryElement(compressedInterval,ensemble);
+		TrieElement<Symbol<String>> decompressedLeaf = predictor.findProbableElementAtDepth(compressedInterval,ensemble, length);
 		List<Symbol<String>> decompressedWord = decompressedLeaf.getPathOfValues();
 		return toString(decompressedWord);
 	}
 
-	private List<Symbol<String>> word(String input) {
+	private List<Symbol<String>> word(String input, Ensemble<String> ensemble ) {
 		List<Symbol<String>> word = new ArrayList<Symbol<String>>();
 		for (char c: input.toCharArray() ) {
 			String s = Character.toString(c);

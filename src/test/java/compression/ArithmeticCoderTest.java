@@ -2,6 +2,8 @@ package compression;
 
 import static org.junit.Assert.*;
 
+import java.util.Random;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,10 +23,21 @@ public class ArithmeticCoderTest {
 	
 	@After
 	public void tearDown() {
-		
+	}
+
+	private void printResults(Ensemble<String> ensemble) {
 		double ratio = (double)totalLengthCompressed/(double)totalLengthInput;
-		System.out.println("totalLengthCompressed " +  totalLengthCompressed + " totalLengthInput " + totalLengthInput  );
-		System.out.println("compression ratio " + ratio);
+
+		System.out.println();
+		System.out.print(ensemble + " ");
+		System.out.print("totalLengthCompressed " +  totalLengthCompressed + " totalLengthInput " + totalLengthInput  );
+		System.out.print(" compression ratio " + ratio);
+		System.out.println(" Entropy of ensemble : " + ensemble.entropy());
+		System.out.println();
+		System.out.println();
+		totalLengthCompressed = 0;
+		totalLengthInput = 0;
+		runs = 0;
 	}
 	
 	// I think this test shows the limits of using double to encode probabilities
@@ -46,10 +59,41 @@ public class ArithmeticCoderTest {
 	@Test
 	public void testCompressRandom() throws NotAProbabilityDistribution {
 		BentCoinEnsemble bentCoin = new BentCoinEnsemble(new double[] { 0.9, 0.1 });
-		for (int i = 0; i < 10; i++) {
-			testCoder(generate(bentCoin, 4), bentCoin);
-		}
+		trialRun(bentCoin, 20);
 	}
+
+	@Test
+	public void testCompressCoolCoin() throws NotAProbabilityDistribution {
+		BentCoinEnsemble bentCoin = new BentCoinEnsemble(new double[] { 0.999, 0.001 });
+		trialRun(bentCoin, 20);
+	}
+	
+	@Test
+	public void testCompressHardCoin() throws NotAProbabilityDistribution {
+		BentCoinEnsemble bentCoin = new BentCoinEnsemble(new double[] { 0.6, 0.4 });
+		trialRun(bentCoin, 20);
+	}	
+
+	@Test
+	public void testCompressPerfectCoin() throws NotAProbabilityDistribution {
+		BentCoinEnsemble bentCoin = new BentCoinEnsemble(new double[] { 0.5, 0.5 });
+		trialRun(bentCoin, 20);
+	}	
+	
+	@Test
+	public void testYinglish() throws NotAProbabilityDistribution {
+		Ensemble<String> bentCoin = new Ensemble<String>(new Random(), new String[] {"a","b","c","d"}, new double[] { 0.5, 0.1 ,0.1,0.3});
+		trialRun(bentCoin, 20);
+	}		
+	
+	private void trialRun(Ensemble<String> bentCoin, int runs) {
+		for (int i = 0; i < runs; i++) {
+			testCoder(generate(bentCoin, 20), bentCoin);
+		}
+		printResults(bentCoin);
+	}
+	
+	
 	
 	private String generate(Ensemble<String> ensemble, int length) {
 		StringBuilder s = new StringBuilder();
@@ -59,7 +103,7 @@ public class ArithmeticCoderTest {
 		return s.toString();
 	}
 
-	private void testCoder(String input, BentCoinEnsemble bentCoin) {
+	private void testCoder(String input, Ensemble<String> bentCoin) {
 		ArithmeticCoder coder = new ArithmeticCoder(bentCoin);
 		
 		String compressed = coder.compress(input);
@@ -68,9 +112,11 @@ public class ArithmeticCoderTest {
 		totalLengthInput += input.length();
 		runs++;
 		
-		String decompressed = coder.decompress(compressed);
+		String decompressed = coder.decompress(compressed, input.length());
 		System.out.print(input); System.out.println(" : " + compressed + " : " + decompressed);
-		//assertTrue(input.length() + 2 >= compressed.length());
+
+		
+		assertEquals(input,decompressed);
 	}
 	
 	
