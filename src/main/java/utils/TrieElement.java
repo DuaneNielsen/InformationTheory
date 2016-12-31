@@ -2,6 +2,14 @@ package utils;
 
 import java.util.*;
 
+/**
+ * Element of a Trie
+ * 
+ * @author github.com/duanenielsen
+ *
+ * @param <T> the Comparable type held by the Trie
+ */
+
 public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElement<T>> {
 
 	protected T value;
@@ -30,6 +38,13 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 		return children;
 	}
 	
+	
+	/**
+	 * Creates and adds a child with the given value 
+	 * 
+	 * @param the value
+	 * @return the child that holds the value
+	 */
 	public TrieElement<T> addChild(T value) {
 		TrieElement<T> child = new TrieElement<T>(value,this);
 		children.add(child);
@@ -53,6 +68,12 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 		return matchingChild;
 	}
 	
+	/**
+	 * returns the path starting from the rootNode to this element (not including the root node of course!)
+	 * 
+	 * @return a list of TrieElements, starting from the rootNode (but not including it) 
+	 * 
+	 */
 	public List<TrieElement<T>> getPath() {
 		List<TrieElement<T>> path = new ArrayList<TrieElement<T>>();
 		TrieElement<T> e = this;
@@ -63,7 +84,12 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 		return path;
 	}
 	
-	
+	/**
+	 * returns a list of siblings, (children from the same parent),
+	 * that comparable considers "before" this one, does not include self
+	 * 
+	 * @return
+	 */
 	public List<TrieElement<T>> getOlderSiblings () {
 		if (this.isRoot()) return new ArrayList<TrieElement<T>>();   
 		List<TrieElement<T>> siblings = new ArrayList<TrieElement<T>>(this.getParent().getChildren());
@@ -72,6 +98,13 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 		siblings.subList(index, siblings.size()).clear();
 		return siblings;
 	}
+	
+	/**
+	 * Returns a list of the datatype held by the Trie, starting from the rootNode,
+	 * to the one held by the element
+	 * 
+	 * @return
+	 */
 	
 	public List<T> getPathOfValues() {
 		List<T> path = new ArrayList<T>();
