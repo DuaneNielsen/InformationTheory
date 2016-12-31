@@ -54,8 +54,6 @@ public class TrieTest {
 		
 		List<String> l = leaf.getPathOfValues();
 		
-		String s = new String();
-		
 		TrieElement<String> current = t.getRoot();
 		for(String c: l) {
 			current = current.findChild(c);

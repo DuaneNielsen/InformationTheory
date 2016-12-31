@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 
 import org.apache.commons.math3.analysis.function.Log;
 
@@ -121,10 +119,10 @@ public class EnsembleOld<T> implements IGenerator {
 		return distrib;
 	}
 
-	public List<Double> getDistribAsList() {
-		return DoubleStream.of(distrib).boxed().collect(Collectors.toList());
-	}
-	
+//	public List<Double> getDistribAsList() {
+//		return DoubleStream.of(distrib).boxed().collect(Collectors.toList());
+//	}
+//	
 	
 	public void setDistrib(double[] distrib) {
 		this.distrib = distrib;

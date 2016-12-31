@@ -30,7 +30,7 @@ public class ArithmeticCodeTableTest {
 		Ensemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
 		ArrayList<Symbol<String>> word = new ArrayList<Symbol<String>>();
 		Symbol<String> zero = bentCoin.findSymbol("0");
-		Symbol<String> one = bentCoin.findSymbol("1");
+		//Symbol<String> one = bentCoin.findSymbol("1");
 		word.add(zero);
 		word.add(zero);
 		word.add(zero);
@@ -62,7 +62,7 @@ public class ArithmeticCodeTableTest {
 		word1.add(one);
 
 		TrieElement<Symbol<String>> wordOne = coder.findWord(word0, bentCoin);
-		TrieElement<Symbol<String>> wordZero = coder.findWord(word1, bentCoin);
+		//TrieElement<Symbol<String>> wordZero = coder.findWord(word1, bentCoin);
 		Interval<String> interval0 = coder.intervalOf(word0,bentCoin);
 		Interval<String> interval1 = coder.intervalOf(word1,bentCoin);
 
@@ -150,7 +150,7 @@ public class ArithmeticCodeTableTest {
 			
 			//assertEquals(offset, interval.min, 0.0);
 			//assertEquals(offset + 0.125, interval.max, 0.0);
-			offset += 0.125;
+			offset = offset + 0.125;
 		}
 		
 	}	

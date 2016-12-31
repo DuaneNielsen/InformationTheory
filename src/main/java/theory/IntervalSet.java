@@ -23,7 +23,6 @@ public class IntervalSet<T extends Comparable<T>> implements Iterable<Interval<T
 
 	@Override
 	public Iterator<Interval<T>> iterator() {
-		// TODO Auto-generated method stub
 		return intervals.iterator();
 	}
 	
