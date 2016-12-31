@@ -21,32 +21,45 @@ public class Interval<T  extends Comparable<T>> implements Comparator<Interval<T
 		OVERLAP, ADJACENT, CONTAINED, APART 
 	}
 	
-	public boolean apart(Interval<T> i) {
+	public boolean apart(Interval<?> i) {
 		return (this.max < i.min) || (i.max < this.min);
 	}
 	
-	public boolean adjacent(Interval<T> i) {
+	public boolean adjacent(Interval<?> i) {
 		return (this.max == i.min) || (i.max == this.min);
 	}
 	
-	public boolean contains(Interval<T> i) {
+	public boolean contains(Interval<?> i) {
 		return (this.min <= i.min ) && (this.max >= i.max);   
 	}
 	
-	public boolean isContainedBy(Interval<T> i) {
-		return (i.min <= this.min) && (i.max >= this.max);
+	public boolean isContainedBy(Interval<?> inputInterval) {
+		return (inputInterval.min <= this.min) && (inputInterval.max >= this.max);
 	}
 	
-	public boolean overlaps(Interval<T> i) {
+	public boolean overlaps(Interval<?> i) {
 		return (this.max > i.min) || (i.max > this.min);
 	}
 	
-	public boolean equal(Interval<T> i) {
+	public boolean equal(Interval<?> i) {
 		return (this.min == i.min) && (this.max == i.max);
 	}
 	
 	public double length() {
-		return symbol.probability;
+		return max - min;
+	}
+	
+	/**
+	 * returns the length of overlap between two intervals
+	 * @return
+	 */
+	public double overlap(Interval<?> i) {
+		double overlap = 0.0;
+		if (this.min < i.min) {
+			overlap =  this.max - i.min;
+		}
+		else overlap = i.max - this.min;
+		return overlap;
 	}
 	
 	@Override

@@ -45,7 +45,7 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 	public TrieElement<T> findChild ( T value )  {
 		TrieElement<T> matchingChild = null;
 		for (TrieElement<T> child: this.getChildren()) {
-			if ( child.getValue() == value )  {
+			if ( child.equals(value)  )  {
 				matchingChild = child;
 			}
 		}
@@ -57,7 +57,7 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 		List<TrieElement<T>> path = new ArrayList<TrieElement<T>>();
 		TrieElement<T> e = this;
 		while (e.getParent() != null) {
-			path.add(e);
+			path.add(0, e);
 			e = e.getParent();
 		}
 		return path;
@@ -66,7 +66,7 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 	
 	public List<TrieElement<T>> getOlderSiblings () {
 		if (this.isRoot()) return new ArrayList<TrieElement<T>>();   
-		List<TrieElement<T>> siblings = this.getParent().getChildren();
+		List<TrieElement<T>> siblings = new ArrayList<TrieElement<T>>(this.getParent().getChildren());
 		Collections.sort(siblings);
 		int index = siblings.indexOf(this);
 		siblings.subList(index, siblings.size()).clear();
@@ -77,7 +77,7 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 		List<T> path = new ArrayList<T>();
 		TrieElement<T> e = this;
 		while (e.getParent() != null) {
-			path.add(e.getValue());
+			path.add(0,e.getValue());
 			e = e.getParent();
 		}
 		return path;
@@ -91,7 +91,15 @@ public class TrieElement<T extends Comparable<T>> implements Comparable<TrieElem
 	public boolean isRoot() {
 		return (this.parent == null);
 	}
+	
+	public boolean equals(TrieElement<T> o) {
+		return (value.compareTo(o.value) == 0);
+	}
 
+	public boolean equals(T o) {
+		return (value.compareTo(o) == 0);
+	}	
+	
 	@Override
 	public int compareTo(TrieElement<T> o) {
 		return value.compareTo(o.value);

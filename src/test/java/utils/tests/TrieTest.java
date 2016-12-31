@@ -24,7 +24,7 @@ public class TrieTest {
 			s = s.concat(c.getValue());
 		}
 		
-		assertEquals("arbadacarba",s);
+		assertEquals("abracadabra",s);
 	
 	}
 
@@ -41,8 +41,27 @@ public class TrieTest {
 			s = s.concat(c);
 		}
 		
-		assertEquals("arbadacarba",s);
+		assertEquals("abracadabra",s);
 	
 	}	
+	
+	@Test
+	public void findChild() {
+		Trie<String> t = new Trie<String>();
+		
+		TrieElement<String> leaf = t.addChild("a").addChild("b").addChild("r").addChild("a").addChild("c").addChild("a").addChild("d").addChild("a").addChild("b").addChild("r").addChild("a");
+		
+		
+		List<String> l = leaf.getPathOfValues();
+		
+		String s = new String();
+		
+		TrieElement<String> current = t.getRoot();
+		for(String c: l) {
+			current = current.findChild(c);
+			assertTrue(current != null);
+		}
+		
+	}
 	
 }

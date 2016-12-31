@@ -1,87 +1,59 @@
 package compression;
 
-import theory.*;
-import utils.Trie;
-import utils.TrieElement;
-
 import java.util.*;
 
-public class ArithmeticCoder<S extends Comparable<S>> {
+import theory.Ensemble;
+import theory.Interval;
+import theory.Symbol;
+import utils.TrieElement;
 
-	public Trie<Symbol<S>> predictor = new Trie<Symbol<S>>();
+public class ArithmeticCoder {
 
-	public Interval<S> intervalOf(List<Symbol<S>> word, Ensemble<S> ensemble) {
+	ArithmeticCodeTable<String> predictor = new ArithmeticCodeTable<String>();
+	BalancedBinaryArithmeticCodeTable bct = new BalancedBinaryArithmeticCodeTable();
+	public Ensemble<String> ensemble;
 
-		TrieElement<Symbol<S>> wordRoot = findWord(word, ensemble);
-		double length = probabilityOfWord(wordRoot);
-		double offset = offsetOfWord(wordRoot);
-		return new Interval<S>(wordRoot.getValue(), offset, length);
+	public ArithmeticCoder(Ensemble<String> ensemble) {
+		super();
+		this.ensemble = ensemble;
+	}	
+	
+	public String compress(String input) {
+		
+		List<Symbol<String>> inputWord = word(input);
+		TrieElement<Symbol<String>> inputElement = predictor.findWord(inputWord, ensemble);
+		Interval<String> inputInterval = predictor.intervalOf(inputElement);
+		TrieElement<Symbol<String>> binaryElement = bct.findBinaryElement(inputInterval);
+		List<Symbol<String>> compressedWord = binaryElement.getPathOfValues();
+		return toString(compressedWord);
+	}
+	
+	public String decompress(String compressed) {
+		
+		List<Symbol<String>> binaryWord = word(compressed);
+		TrieElement<Symbol<String>> compressedElement = bct.findWord(binaryWord, bct.binaryEnsemble);
+		Interval<String> compressedInterval = bct.intervalOf(compressedElement);
+		TrieElement<Symbol<String>> decompressedLeaf = predictor.findBinaryElement(compressedInterval,ensemble);
+		List<Symbol<String>> decompressedWord = decompressedLeaf.getPathOfValues();
+		return toString(decompressedWord);
 	}
 
-	/**
-	 * gives the root symbol for the word, creates the word if it does not exist
-	 * 
-	 * also generates all siblings along the words path
-	 * 
-	 * @param word
-	 * @return the root symbol of the word
-	 */
-	public TrieElement<Symbol<S>> findWord(List<Symbol<S>> word, Ensemble<S> ensemble) {
-		TrieElement<Symbol<S>> current = predictor.getRoot();
-		TrieElement<Symbol<S>> next = null;
-
-		for (Symbol<S> symbol : word) {
-			next = current.findChild(symbol);
-			if (next == null) {
-				spawnAllChildren(current, ensemble);
-				current = current.findChild(symbol);
-			} else {
-				current = next;
-			}
+	private List<Symbol<String>> word(String input) {
+		List<Symbol<String>> word = new ArrayList<Symbol<String>>();
+		for (char c: input.toCharArray() ) {
+			String s = Character.toString(c);
+			Symbol<String> symbol = ensemble.findSymbol(s);
+			word.add(symbol);
 		}
-
-		return current;
+		return word;
 	}
 
-	/**
-	 * populates all children for the given element using probabilities and
-	 * symbols in the ensemble
-	 * 
-	 * @param parent
-	 * @param ensemble
-	 * @return
-	 */
-
-	public TrieElement<Symbol<S>> spawnAllChildren(TrieElement<Symbol<S>> parent, Ensemble<S> ensemble) {
-		for (Symbol<S> symbol : ensemble.getAlphabet()) {
-			if (parent.findChild(symbol) == null) {
-				parent.addChild(symbol);
-			}
+	private String toString(List<Symbol<String>> word) {
+		StringBuilder sb = new StringBuilder();
+		for (Symbol<String> s: word) {
+			sb.append(s.getSymbol());
 		}
-		return parent;
+		return sb.toString();
 	}
-
-	public Double probabilityOfWord(TrieElement<Symbol<S>> wordRoot) {
-		double probability = wordRoot.getValue().getProbability();
-		TrieElement<Symbol<S>> current = wordRoot.getParent();
-		while (current.getParent() != null) {
-			probability = probability * current.getValue().getProbability();
-			current = current.getParent();
-		}
-		return probability;
-	}
-
-	public Double offsetOfWord(TrieElement<Symbol<S>> wordRoot) {
-		TrieElement<Symbol<S>> current = wordRoot;
-		double offset = 0;
-
-		while (current.getParent() != null) {
-			for (TrieElement<Symbol<S>> sibling : current.getOlderSiblings()) {
-				offset += probabilityOfWord(sibling);
-			}
-			current = current.getParent();
-		}
-		return offset;
-	}
-
+	
 }

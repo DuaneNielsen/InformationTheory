@@ -51,10 +51,14 @@ public class Symbol<T extends Comparable<? super T>> implements Comparable<Symbo
 	}
 	
 	
-	public boolean equals(Symbol<T> obj) {
-		return this.symbol.equals(obj.getSymbol());
+	public boolean equals(T obj) {
+		return (this.symbol.compareTo(obj) == 0);
 	}
 	
+	public boolean equals(Symbol<T> obj) {
+		return ( this.symbol.compareTo(obj.symbol) == 0 );
+	}
+
 	@Override
 	public int compareTo(Symbol<T> o) {
 		return this.symbol.compareTo(o.symbol);

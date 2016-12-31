@@ -14,12 +14,10 @@ public class IntervalTests {
 		Interval<String> i1 = new Interval<String>(new Symbol<String>("a",0.3),0.0,0.3);
 		Interval<String> i2 = new Interval<String>(new Symbol<String>("b",0.3),0.5,0.3);
 		assertFalse(i1.adjacent(i1));
-		assertFalse(i1.contains(i1));
-		assertFalse(i1.contains(i1));
+		assertTrue(i1.contains(i1));
 		assertTrue(i1.equal(i1));
 		assertFalse(i2.adjacent(i2));
-		assertFalse(i2.contains(i2));
-		assertFalse(i2.contains(i2));
+		assertTrue(i2.contains(i2));
 		assertTrue(i2.equal(i2));
 	}	
 	
@@ -65,6 +63,8 @@ public class IntervalTests {
 		assertFalse(i2.apart(i1));
 		assertTrue(i1.overlaps(i2));
 		assertTrue(i2.overlaps(i1));
+		assertEquals(0.1, i2.overlap(i1),0.001);
+		assertEquals(0.1, i1.overlap(i2),0.001);
 	}		
 	
 	
