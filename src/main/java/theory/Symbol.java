@@ -3,8 +3,13 @@ package theory;
 public class Symbol<T extends Comparable<? super T>> implements Comparable<Symbol<T>> {
 	
 	protected T symbol;
-	protected Double probability;
+	protected Double probability = 0.0;
 	protected Object label;
+	
+	public Symbol(T symbol) {
+		super();
+		this.symbol = symbol;
+	}
 	
 	public Symbol(T symbol, Double probability) {
 		super();
@@ -59,7 +64,6 @@ public class Symbol<T extends Comparable<? super T>> implements Comparable<Symbo
 		return ( this.symbol.compareTo(obj.symbol) == 0 );
 	}
 
-	@Override
 	public int compareTo(Symbol<T> o) {
 		return this.symbol.compareTo(o.symbol);
 	}	

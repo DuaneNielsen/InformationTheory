@@ -1,10 +1,11 @@
 package compression;
 
 import theory.*;
-import utils.Trie;
-import utils.TrieElement;
 
 import java.util.*;
+
+import com.github.duanielsen.trie.Trie;
+import com.github.duanielsen.trie.TrieElement;
 
 public class ArithmeticCodeTable<S extends Comparable<S>> {
 

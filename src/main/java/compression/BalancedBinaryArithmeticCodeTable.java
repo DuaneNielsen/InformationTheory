@@ -2,11 +2,12 @@ package compression;
 
 import java.util.*;
 
+import com.github.duanielsen.trie.TrieElement;
+
 import theory.Ensemble;
 import theory.Interval;
 import theory.NotAProbabilityDistribution;
 import theory.Symbol;
-import utils.TrieElement;
 
 public class BalancedBinaryArithmeticCodeTable extends ArithmeticCodeTable<String> {
 

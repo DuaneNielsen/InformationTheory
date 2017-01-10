@@ -137,6 +137,10 @@ public class Ensemble<T extends Comparable<T>> implements IGenerator {
 		return alphabet;
 	}
 
+	public int alphabetLength() {
+		return alphabet.size();
+	}
+	
 	public void setAlphabet(List<Symbol<T>> alphabet) throws NotAProbabilityDistribution {
 		this.alphabet = alphabet;
 		init();

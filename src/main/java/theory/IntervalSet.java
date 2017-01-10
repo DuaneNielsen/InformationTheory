@@ -21,7 +21,6 @@ public class IntervalSet<T extends Comparable<T>> implements Iterable<Interval<T
 		return intervals.toString();
 	}
 
-	@Override
 	public Iterator<Interval<T>> iterator() {
 		return intervals.iterator();
 	}

@@ -62,7 +62,7 @@ public class Interval<T  extends Comparable<T>> implements Comparator<Interval<T
 		return overlap;
 	}
 	
-	@Override
+
 	// TODO this is a hack I need to think more carefully about
 	public int compare(Interval<T> int1, Interval<T> int2) {
 		return (int) (int1.min - int2.min) * 10000;

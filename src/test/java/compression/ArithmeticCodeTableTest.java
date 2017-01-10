@@ -9,11 +9,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.Test;
 
+import com.github.duanielsen.trie.TrieElement;
+
 import theory.Ensemble;
 import theory.Interval;
 import theory.NotAProbabilityDistribution;
 import theory.Symbol;
-import utils.TrieElement;
 
 public class ArithmeticCodeTableTest {
 
