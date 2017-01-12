@@ -7,7 +7,7 @@ public class IntervalSet<T extends Comparable<T>> implements Iterable<Interval<T
 
 	protected List<Interval<T>> intervals;
 
-	public IntervalSet(Ensemble<T> ensemble) {
+	public IntervalSet(IEnsemble<T> ensemble) {
 		super();
 		this.intervals = new ArrayList<Interval<T>>();
 		double offset = 0;

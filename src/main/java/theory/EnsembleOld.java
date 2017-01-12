@@ -11,7 +11,7 @@ import org.apache.commons.math3.analysis.function.Log;
 
 import channel.IGenerator;
 
-public class EnsembleOld<T> implements IGenerator {
+public class EnsembleOld<T> implements IGenerator{
 
 	// An Ensemble is a random variable, a finite alphabet, and a probability
 	// distribution representing the likelihood of occurrence of the letter of

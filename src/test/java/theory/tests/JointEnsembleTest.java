@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-import theory.Ensemble;
+import theory.IEnsemble;
 import theory.JointEnsemble;
 import theory.Symbol;
 import theory.SymbolNotFound;
@@ -60,12 +60,12 @@ public class JointEnsembleTest {
 
 	@Test
 	public void testMarginals() {
-		Ensemble<String> marginalX = joint.marginalX();
-		Ensemble<String> marginalY = joint.marginalY();
-		Symbol<String> cloudy = marginalX.findSymbol("Cloudy");
-		Symbol<String> sunny = marginalX.findSymbol("Sunny");
-		Symbol<String> hot = marginalY.findSymbol("Hot");
-		Symbol<String> crisp = marginalY.findSymbol("Crisp");
+		IEnsemble<String> marginalX = joint.marginalX();
+		IEnsemble<String> marginalY = joint.marginalY();
+		Symbol<String> cloudy = marginalX.getSymbol("Cloudy");
+		Symbol<String> sunny = marginalX.getSymbol("Sunny");
+		Symbol<String> hot = marginalY.getSymbol("Hot");
+		Symbol<String> crisp = marginalY.getSymbol("Crisp");
 		
 		assertEquals(1.0/2.0,cloudy.getProbability(),0.0);
 		assertEquals(1.0/8.0,sunny.getProbability(),0.0);
@@ -95,6 +95,8 @@ public class JointEnsembleTest {
 		
 	}
 
+	
+	
 	public double informationOfOccurence(double p) {
 		Log log = new Log();
 		double info =  log.value((1.0)/p) /log.value(2);

@@ -54,8 +54,8 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> {
 		}		
 	}
 
-	public Ensemble<X> marginalX() {
-		Ensemble<X> ensemble = null;
+	public IEnsemble<X> marginalX() {
+		IEnsemble<X> ensemble = null;
 		try {
 			ensemble = new Ensemble<X>(new Random(), x);
 		} catch (NotAProbabilityDistribution e) {
@@ -64,8 +64,8 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> {
 		return ensemble;
 	}
 	
-	public Ensemble<Y> marginalY() {
-		Ensemble<Y> ensemble = null;
+	public IEnsemble<Y> marginalY() {
+		IEnsemble<Y> ensemble = null;
 		try {
 			ensemble = new Ensemble<Y>(new Random(), y);
 		} catch (NotAProbabilityDistribution e) {
@@ -116,7 +116,5 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> {
 		logprob.divi(logtwo);
 		return logprob;
 	}
-	
-	
 	
 }

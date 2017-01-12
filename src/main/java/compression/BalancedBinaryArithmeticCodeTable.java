@@ -5,6 +5,7 @@ import java.util.*;
 import com.github.duanielsen.trie.TrieElement;
 
 import theory.Ensemble;
+import theory.IEnsemble;
 import theory.Interval;
 import theory.NotAProbabilityDistribution;
 import theory.Symbol;
@@ -13,7 +14,7 @@ public class BalancedBinaryArithmeticCodeTable extends ArithmeticCodeTable<Strin
 
 	public static String[] binaryAlphabet = { "0", "1" };
 	public static double[] binaryProbability = { 0.5, 0.5 };
-	public Ensemble<String> binaryEnsemble;
+	public IEnsemble<String> binaryEnsemble;
 
 	public BalancedBinaryArithmeticCodeTable() {
 		super();

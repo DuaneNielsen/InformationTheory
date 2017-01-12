@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import theory.Ensemble;
+import theory.IEnsemble;
 import theory.NotAProbabilityDistribution;
 
 public class ArithmeticCoderTest {
@@ -25,7 +26,7 @@ public class ArithmeticCoderTest {
 	public void tearDown() {
 	}
 
-	private void printResults(Ensemble<String> ensemble) {
+	private void printResults(IEnsemble<String> ensemble) {
 		double ratio = (double)totalLengthCompressed/(double)totalLengthInput;
 
 		System.out.println();
@@ -103,7 +104,7 @@ public class ArithmeticCoderTest {
 		return s.toString();
 	}
 
-	private void testCoder(String input, Ensemble<String> bentCoin) {
+	private void testCoder(String input, IEnsemble<String> bentCoin) {
 		ArithmeticCoder coder = new ArithmeticCoder(bentCoin);
 		
 		String compressed = coder.compress(input);

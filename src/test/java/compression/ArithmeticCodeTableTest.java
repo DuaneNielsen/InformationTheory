@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.github.duanielsen.trie.TrieElement;
 
 import theory.Ensemble;
+import theory.IEnsemble;
 import theory.Interval;
 import theory.NotAProbabilityDistribution;
 import theory.Symbol;
@@ -28,9 +29,9 @@ public class ArithmeticCodeTableTest {
 		String[] coin = {"0","1"};
 		double[] distrib = {0.9,0.1};
 	
-		Ensemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
+		IEnsemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
 		ArrayList<Symbol<String>> word = new ArrayList<Symbol<String>>();
-		Symbol<String> zero = bentCoin.findSymbol("0");
+		Symbol<String> zero = bentCoin.getSymbol("0");
 		//Symbol<String> one = bentCoin.findSymbol("1");
 		word.add(zero);
 		word.add(zero);
@@ -54,11 +55,11 @@ public class ArithmeticCodeTableTest {
 		String[] coin = {"0","1"};
 		double[] distrib = {0.5,0.5};
 	
-		Ensemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
+		IEnsemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
 		ArrayList<Symbol<String>> word1 = new ArrayList<Symbol<String>>();
 		ArrayList<Symbol<String>> word0 = new ArrayList<Symbol<String>>();
-		Symbol<String> zero = bentCoin.findSymbol("0");
-		Symbol<String> one = bentCoin.findSymbol("1");
+		Symbol<String> zero = bentCoin.getSymbol("0");
+		Symbol<String> one = bentCoin.getSymbol("1");
 		word0.add(zero);
 		word1.add(one);
 
@@ -81,7 +82,7 @@ public class ArithmeticCodeTableTest {
 		String[] coin = {"0","1"};
 		double[] distrib = {0.5,0.5};
 	
-		Ensemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
+		IEnsemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
 
 		int depth = 3;
 		List<List<Symbol<String>>> list = new CopyOnWriteArrayList<List<Symbol<String>>>();
@@ -122,7 +123,7 @@ public class ArithmeticCodeTableTest {
 		String[] coin = {"0","1"};
 		double[] distrib = {0.9,0.1};
 	
-		Ensemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
+		IEnsemble<String> bentCoin = new Ensemble<String>(new Random(), coin, distrib);
 
 		int depth = 3;
 		List<List<Symbol<String>>> list = new CopyOnWriteArrayList<List<Symbol<String>>>();

@@ -4,21 +4,29 @@ import java.util.*;
 
 import org.apache.commons.math3.analysis.function.Log;
 
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import channel.IGenerator;
 
-public class Ensemble<T extends Comparable<T>> implements IGenerator {
+public class Ensemble<T extends Comparable<T>> implements IGenerator, IEnsemble<T> {
 
 	// An Ensemble is a random variable, a finite alphabet, and a probability
 	// distribution representing the likelihood of occurrence of the letter of
 	// the alphabet in a sequence
 
+		
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 	protected Random randomVariable;
 	protected List<Symbol<T>> alphabet = new ArrayList<Symbol<T>>();
-	private Log log = new Log();
+	private INDArray probVector;
+	private Log LOG = new Log();
 	private Map<T,Symbol<T>> map = new HashMap<T,Symbol<T>>();
 	
 	public Ensemble( Random randomVariable, T[] alphabet, double[] probabilityDistribution ) throws NotAProbabilityDistribution {		
-		this.randomVariable = randomVariable;		
+		this.randomVariable = randomVariable;
 		for (int i = 0; i < alphabet.length; i++) {
 			this.alphabet.add(new Symbol<T>(alphabet[i], probabilityDistribution[i]));
 		}
@@ -31,11 +39,18 @@ public class Ensemble<T extends Comparable<T>> implements IGenerator {
 		init();
 	}
 	
-	public void init() throws NotAProbabilityDistribution {
+	public void init() {
 		checkDistribution();
 		generateMap();
 	}
 
+	protected void populateProbabilityVector() {
+		probVector = Nd4j.zeros(this.alphabetLength());
+		for (int i = 0; i < this.alphabetLength(); i++) {
+			probVector.put(0, i, alphabet.get(i).getProbability() );
+		}
+	}
+	
 	protected void generateMap() {
 		map = new HashMap<T,Symbol<T>>();
 		for (Symbol<T> symbol: this.alphabet) {
@@ -43,55 +58,49 @@ public class Ensemble<T extends Comparable<T>> implements IGenerator {
 		}
 	}
 	
-	protected void checkDistribution() throws NotAProbabilityDistribution {
+	protected boolean checkDistribution() {
 		double total = 0; 
 		for (Symbol<T> symbol: this.alphabet) {
 			total += symbol.getProbability();
 		}
-		if (total < 0.9999999) throw new NotAProbabilityDistribution();
-		if (total > 1.0000001) throw new NotAProbabilityDistribution();
+		if (total < 0.9999999 | total > 1.0000001) {
+			log.warn("Ensemble probability does not total to 1.0 it totals: " + total);
+			return false;
+		}
+		return true;
 	}
 	
-	/**
-	 * The probability of occurrence of a symbol in the ensemble
-	 * @param symbol type
-	 * @return the probability of the occurrence of symbol
+	/* (non-Javadoc)
+	 * @see theory.IEnseble#probabilityOfOccurence(T)
 	 */
 	public double probabilityOfOccurence(T symbol) {
 		return map.get(symbol).getProbability();
 	}
 	
-	/**
-	 * The probability of occurrence of a symbol in the ensemble
-	 * @param the actual symbol (just a bit of sugar)
-	 * @return the probability of the occurrence of symbol
+	/* (non-Javadoc)
+	 * @see theory.IEnseble#probabilityOfOccurence(theory.Symbol)
 	 */
 	public double probabilityOfOccurence(Symbol<T> symbol) {
 		return map.get(symbol.getSymbol()).getProbability();
 	}
 	
-	/**
-	 * The probability of occurrence of a symbol in the ensemble
-	 * @param symbol
-	 * @return the probability of the occurrence of symbol
+	/* (non-Javadoc)
+	 * @see theory.IEnseble#informationOfOccurence(theory.Symbol)
 	 */	
 	public double informationOfOccurence(Symbol<T> symbol) {
 		return informationOfOccurence(symbol.getSymbol());
 	}
 	
-	/**
-	 *  returns the Shannon information content in bits, of an isolated occurrence of a member of the alphabet
-	 * @param symbol
-	 * @return Shannon information content for symbol in bits
+	/* (non-Javadoc)
+	 * @see theory.IEnseble#informationOfOccurence(T)
 	 */
 	public double informationOfOccurence(T symbol) {
-		double info =  log.value(1/probabilityOfOccurence(symbol))/log.value(2);
+		double info =  LOG.value(1/probabilityOfOccurence(symbol))/LOG.value(2);
 		if (Double.isFinite(info)) {return info;} else {return (double)0.0;}
 	}
 	
-	/**
-	 * Shannon entropy is the average information content for the Ensemble
-	 * @return the Shannon entropy of the Ensemble in bits
+	/* (non-Javadoc)
+	 * @see theory.IEnseble#entropy()
 	 */
 	public double entropy() {
 		double entropy = 0;
@@ -133,10 +142,16 @@ public class Ensemble<T extends Comparable<T>> implements IGenerator {
 		this.randomVariable = randomVariable;
 	}
 
+	/* (non-Javadoc)
+	 * @see theory.IEnseble#getAlphabet()
+	 */
 	public List<Symbol<T>> getAlphabet() {
 		return alphabet;
 	}
 
+	/* (non-Javadoc)
+	 * @see theory.IEnseble#alphabetLength()
+	 */
 	public int alphabetLength() {
 		return alphabet.size();
 	}
@@ -146,12 +161,11 @@ public class Ensemble<T extends Comparable<T>> implements IGenerator {
 		init();
 	}
 	
-	public Symbol<T> findSymbol(T key) {
+	/* (non-Javadoc)
+	 * @see theory.IEnseble#getSymbol(T)
+	 */
+	public Symbol<T> getSymbol(T key) {
 		return map.get(key);
-	}
-	
-	public Symbol<T> findSymbol(Symbol<T> key) {
-		return map.get(key.getSymbol());
 	}
 		
 	

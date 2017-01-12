@@ -11,7 +11,7 @@ public class ArithmeticCodeTable<S extends Comparable<S>> {
 
 	public Trie<Symbol<S>> predictor = new Trie<Symbol<S>>();
 	
-	public Interval<S> intervalOf(List<Symbol<S>> word, Ensemble<S> ensemble) {
+	public Interval<S> intervalOf(List<Symbol<S>> word, IEnsemble<S> ensemble) {
 
 		TrieElement<Symbol<S>> wordRoot = findWord(word, ensemble);
 		return intervalOf(wordRoot);
@@ -31,7 +31,7 @@ public class ArithmeticCodeTable<S extends Comparable<S>> {
 	 * @param word
 	 * @return the root symbol of the word
 	 */
-	public TrieElement<Symbol<S>> findWord(List<Symbol<S>> word, Ensemble<S> ensemble) {
+	public TrieElement<Symbol<S>> findWord(List<Symbol<S>> word, IEnsemble<S> ensemble) {
 		TrieElement<Symbol<S>> current = predictor.getRoot();
 		TrieElement<Symbol<S>> next = null;
 
@@ -57,7 +57,7 @@ public class ArithmeticCodeTable<S extends Comparable<S>> {
 	 * @return
 	 */
 
-	public TrieElement<Symbol<S>> spawnAllChildren(TrieElement<Symbol<S>> parent, Ensemble<S> ensemble) {
+	public TrieElement<Symbol<S>> spawnAllChildren(TrieElement<Symbol<S>> parent, IEnsemble<S> ensemble) {
 		for (Symbol<S> symbol : ensemble.getAlphabet()) {
 			if (parent.findChild(symbol) == null) {
 				parent.addChild(symbol);
@@ -89,7 +89,7 @@ public class ArithmeticCodeTable<S extends Comparable<S>> {
 		return offset;
 	}
 	
-	TrieElement<Symbol<S>> findBinaryElement(Interval<?> inputInterval, Ensemble<S> ensemble) {
+	TrieElement<Symbol<S>> findBinaryElement(Interval<?> inputInterval, IEnsemble<S> ensemble) {
 		TrieElement<Symbol<S>> current = predictor.getRoot();
 		TrieElement<Symbol<S>> sideWithMostOverlap = null;
 
@@ -117,7 +117,7 @@ public class ArithmeticCodeTable<S extends Comparable<S>> {
 		}
 	}
 
-	TrieElement<Symbol<S>> findProbableElementAtDepth(Interval<?> inputInterval, Ensemble<S> ensemble, int depth) {
+	TrieElement<Symbol<S>> findProbableElementAtDepth(Interval<?> inputInterval, IEnsemble<S> ensemble, int depth) {
 		TrieElement<Symbol<S>> current = predictor.getRoot();
 		//TrieElement<Symbol<S>> sideWithMostOverlap = null;
 

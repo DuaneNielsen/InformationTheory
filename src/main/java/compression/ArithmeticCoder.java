@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.github.duanielsen.trie.TrieElement;
 
-import theory.Ensemble;
+import theory.IEnsemble;
 import theory.Interval;
 import theory.Symbol;
 
@@ -12,9 +12,9 @@ public class ArithmeticCoder {
 
 	ArithmeticCodeTable<String> predictor = new ArithmeticCodeTable<String>();
 	BalancedBinaryArithmeticCodeTable bct = new BalancedBinaryArithmeticCodeTable();
-	public Ensemble<String> ensemble;
+	public IEnsemble<String> ensemble;
 
-	public ArithmeticCoder(Ensemble<String> ensemble) {
+	public ArithmeticCoder(IEnsemble<String> ensemble) {
 		super();
 		this.ensemble = ensemble;
 	}	
@@ -39,11 +39,11 @@ public class ArithmeticCoder {
 		return toString(decompressedWord);
 	}
 
-	private List<Symbol<String>> word(String input, Ensemble<String> ensemble ) {
+	private List<Symbol<String>> word(String input, IEnsemble<String> ensemble ) {
 		List<Symbol<String>> word = new ArrayList<Symbol<String>>();
 		for (char c: input.toCharArray() ) {
 			String s = Character.toString(c);
-			Symbol<String> symbol = ensemble.findSymbol(s);
+			Symbol<String> symbol = ensemble.getSymbol(s);
 			word.add(symbol);
 		}
 		return word;
