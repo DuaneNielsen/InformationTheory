@@ -24,17 +24,17 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> imp
 		
 		this.jointprob = Nd4j.create(probabilities);
 
-		INDArray marginalX = jointprob.sum(0);
-		INDArray marginalY = jointprob.sum(1);
-		assert (marginalX.columns() == x.size());
-		assert (marginalY.rows() == y.size());
+		INDArray marginalX = jointprob.sum(1);
+		INDArray marginalY = jointprob.sum(0);
+		assert (marginalX.rows() == x.size());
+		assert (marginalY.columns() == y.size());
 		
-		for (int i = 0; i < marginalX.columns(); i++) {
-			x.get(i).setProbability(marginalX.getDouble(0, i));
+		for (int i = 0; i < marginalX.rows(); i++) {
+			x.get(i).setProbability(marginalX.getDouble(i, 0));
 		}
 
-		for (int j = 0; j < marginalY.rows(); j++) {
-			y.get(j).setProbability(marginalY.getDouble(j, 0));
+		for (int j = 0; j < marginalY.columns(); j++) {
+			y.get(j).setProbability(marginalY.getDouble(0, j));
 		}
 		
 		generateMap();

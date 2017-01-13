@@ -24,7 +24,8 @@ public class JointEnsembleTest {
 	List<Symbol<String>> symbolsY = new ArrayList<Symbol<String>>();
 	double[][] jointprobability;
 	IJointEnsemble<String, String> joint;
-
+	FastJointEnsemble<String, String> fastjoint;
+	
 	@Before
 	public void setUp() throws Exception {
 		symbolsX.add(new Symbol<String>("Cloudy"));
@@ -44,6 +45,10 @@ public class JointEnsembleTest {
 			{ 1.0 / 4.0,  0.0 / 1.0,  0.0 / 1.0,  0.0 / 1.0 }, };
 
 		joint = new JointEnsemble<String, String>(symbolsX, symbolsY, jointprobability);
+		
+		DataTypeUtil.setDTypeForContext(DataBuffer.Type.DOUBLE);
+		fastjoint = new FastJointEnsemble<String, String>(new String[]{"Cloudy","Clear","Overcast","Sunny"}, 
+				new String[]{"Hot","Cold","Balmy","Crisp"}, jointprobability);
 
 	}
 
@@ -78,21 +83,21 @@ public class JointEnsembleTest {
 
 	@Test
 	public void testMarginals() {
-		IEnsemble<String> marginalX = joint.marginalRow();
-		IEnsemble<String> marginalY = joint.marginalColumn();
-		Symbol<String> cloudy = marginalX.getSymbol("Cloudy");
-		Symbol<String> sunny = marginalX.getSymbol("Sunny");
-		Symbol<String> hot = marginalY.getSymbol("Hot");
-		Symbol<String> crisp = marginalY.getSymbol("Crisp");
+		IEnsemble<String> row = joint.marginalRow();
+		IEnsemble<String> column = joint.marginalColumn();
+		Symbol<String> cloudy = row.getSymbol("Cloudy");
+		Symbol<String> sunny = row.getSymbol("Sunny");
+		Symbol<String> hot = column.getSymbol("Hot");
+		Symbol<String> crisp = column.getSymbol("Crisp");
 		
-		assertEquals(1.0/2.0,cloudy.getProbability(),0.0);
-		assertEquals(1.0/8.0,sunny.getProbability(),0.0);
+		assertEquals(1.0/4.0,cloudy.getProbability(),0.0);
+		assertEquals(1.0/4.0,sunny.getProbability(),0.0);
 
-		assertEquals(1.0/4.0,hot.getProbability(),0.0);
-		assertEquals(1.0/4.0,crisp.getProbability(),0.0);
+		assertEquals(1.0/2.0,hot.getProbability(),0.0);
+		assertEquals(1.0/8.0,crisp.getProbability(),0.0);
 		
-		assertEquals(7.0/4.0,marginalX.entropy(),0.0);
-		assertEquals(2.0, marginalY.entropy(),0.0);
+		assertEquals(7.0/4.0,column.entropy(),0.0);
+		assertEquals(2.0, row.entropy(),0.0);
 	}	
 	
 	@Test
@@ -100,21 +105,21 @@ public class JointEnsembleTest {
 		DataTypeUtil.setDTypeForContext(DataBuffer.Type.DOUBLE);
 		joint = new FastJointEnsemble<String, String>(new String[]{"Cloudy","Clear","Overcast","Sunny"}, 
 				new String[]{"Hot","Cold","Balmy","Crisp"}, jointprobability);
-		IEnsemble<String> marginalX = joint.marginalRow();
-		IEnsemble<String> marginalY = joint.marginalColumn();
-		Symbol<String> cloudy = marginalX.getSymbol("Cloudy");
-		Symbol<String> sunny = marginalX.getSymbol("Sunny");
-		Symbol<String> hot = marginalY.getSymbol("Hot");
-		Symbol<String> crisp = marginalY.getSymbol("Crisp");
+		IEnsemble<String> row = joint.marginalRow();
+		IEnsemble<String> column = joint.marginalColumn();
+		Symbol<String> cloudy = row.getSymbol("Cloudy");
+		Symbol<String> sunny = row.getSymbol("Sunny");
+		Symbol<String> hot = column.getSymbol("Hot");
+		Symbol<String> crisp = column.getSymbol("Crisp");
 		
-		assertEquals(1.0/2.0,cloudy.getProbability(),0.0);
-		assertEquals(1.0/8.0,sunny.getProbability(),0.0);
+		assertEquals(1.0/4.0,cloudy.getProbability(),0.0);
+		assertEquals(1.0/4.0,sunny.getProbability(),0.0);
 
-		assertEquals(1.0/4.0,hot.getProbability(),0.0);
-		assertEquals(1.0/4.0,crisp.getProbability(),0.0);
+		assertEquals(1.0/2.0,hot.getProbability(),0.0);
+		assertEquals(1.0/8.0,crisp.getProbability(),0.0);
 		
-		assertEquals(7.0/4.0,marginalX.entropy(),0.0);
-		assertEquals(2.0, marginalY.entropy(),0.0);
+		assertEquals(2.0,row.entropy(),0.0);
+		assertEquals(7.0/4.0, column.entropy(),0.0);
 	}
 	
 	@Test
@@ -154,6 +159,19 @@ public class JointEnsembleTest {
 		double entropy = joint.entropy();
 		assertEquals(27.0/8.0, entropy, 0.0);
 		
+	}
+	
+	@Test
+	public void conditionalProbabability() {
+		assertEquals(1.0/2.0,fastjoint.conditionalOnRow("Cloudy").probabilityOfOccurence("Hot"),0.0);
+		assertEquals(1.0/4.0,fastjoint.conditionalOnRow("Cloudy").probabilityOfOccurence("Cold"),0.0);
+		assertEquals(1.0/8.0,fastjoint.conditionalOnRow("Cloudy").probabilityOfOccurence("Balmy"),0.0);
+		assertEquals(1.0/8.0,fastjoint.conditionalOnRow("Cloudy").probabilityOfOccurence("Crisp"),0.0);
+		
+		assertEquals(1.0/4.0,fastjoint.conditionalOnRow("Clear").probabilityOfOccurence("Hot"),0.0);
+		assertEquals(1.0/2.0,fastjoint.conditionalOnRow("Clear").probabilityOfOccurence("Cold"),0.0);
+		assertEquals(1.0/8.0,fastjoint.conditionalOnRow("Clear").probabilityOfOccurence("Balmy"),0.0);
+		assertEquals(1.0/8.0,fastjoint.conditionalOnRow("Clear").probabilityOfOccurence("Crisp"),0.0);
 	}
 	
 	

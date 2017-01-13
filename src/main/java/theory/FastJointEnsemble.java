@@ -37,15 +37,15 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 		this.rows = rows;
 		this.columns = columns;
 		this.jointprob = probabilities;
-	}		
+	}
 	
 	public IEnsemble<ROW> marginalRow() {
-		if (marginalRow == null)  return this.marginalRow = new FastEnsemble<ROW>(rows,jointprob.sum(0));
+		if (marginalRow == null)  return this.marginalRow = new FastEnsemble<ROW>(rows,jointprob.sum(1).transpose());
 		return marginalRow;
 	}
 
 	public IEnsemble<COLUMN> marginalColumn() {
-		if (marginalColumn == null)  this.marginalColumn = new FastEnsemble<COLUMN>(columns,jointprob.sum(1).transpose());
+		if (marginalColumn == null)  this.marginalColumn = new FastEnsemble<COLUMN>(columns,jointprob.sum(0));
 		return marginalColumn;
 	}
 
@@ -74,6 +74,28 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 		lazyEvalShannonInformation();
 		return information;
 	}
+	
+	/**
+	 * return the conditional probability of the row types, given the column
+	 * @param symbol
+	 * @return
+	 */
+	public IEnsemble<ROW> conditionalOnColumn(COLUMN symbol) {
+		Number marginal = marginalColumn().getSymbol(symbol).getProbability();
+		INDArray conditional = jointprob.getColumn(getColumn(symbol)).mul(marginal).transpose();
+		return new FastEnsemble<ROW>(rows, conditional);
+	}
+	
+	/**
+	 * return the conditional probability of the column, given the row
+	 * @param symbol
+	 * @return
+	 */
+	public IEnsemble<COLUMN> conditionalOnRow(ROW symbol) {
+		Number marginal = marginalRow().getSymbol(symbol).getProbability();
+		INDArray conditional = jointprob.getRow(getRow(symbol)).div(marginal);
+		return new FastEnsemble<COLUMN>(columns, conditional);
+	}	
 	
 	private void lazyEvalShannonInformation(){
 		if (information == null) {
