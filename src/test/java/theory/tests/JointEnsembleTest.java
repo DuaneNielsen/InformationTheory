@@ -7,9 +7,13 @@ import java.util.*;
 import org.apache.commons.math3.analysis.function.Log;
 import org.junit.Before;
 import org.junit.Test;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.buffer.util.DataTypeUtil;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import theory.FastJointEnsemble;
 import theory.IEnsemble;
+import theory.IJointEnsemble;
 import theory.JointEnsemble;
 import theory.Symbol;
 import theory.SymbolNotFound;
@@ -19,7 +23,7 @@ public class JointEnsembleTest {
 	List<Symbol<String>> symbolsX = new ArrayList<Symbol<String>>();
 	List<Symbol<String>> symbolsY = new ArrayList<Symbol<String>>();
 	double[][] jointprobability;
-	JointEnsemble<String, String> joint;
+	IJointEnsemble<String, String> joint;
 
 	@Before
 	public void setUp() throws Exception {
@@ -51,17 +55,53 @@ public class JointEnsembleTest {
 		Symbol<String> hot = joint.getSymbolY("Hot");
 		Symbol<String> crisp = joint.getSymbolY("Crisp");
 
-		assertEquals(1.0 / 8.0, joint.getProbability(cloudy, hot), 0.0);
-		assertEquals(1.0 / 4.0, joint.getProbability(cloudy, crisp), 0.0);
-		assertEquals(1.0 / 32.0, joint.getProbability(sunny, hot), 0.0);
-		assertEquals(0.0 / 8.0, joint.getProbability(sunny, crisp), 0.0);
+		assertEquals(1.0 / 8.0, joint.getProbability("Cloudy", "Hot"), 0.0);
+		assertEquals(1.0 / 32.0, joint.getProbability("Cloudy", "Crisp"), 0.0);
+		assertEquals(1.0 / 4.0, joint.getProbability("Sunny", "Hot"), 0.0);
+		assertEquals(0.0 / 8.0, joint.getProbability("Sunny", "Crisp"), 0.0);
 
 	}
+	
+	@Test
+	public void testFastJointEnsemble() throws SymbolNotFound {
+
+		DataTypeUtil.setDTypeForContext(DataBuffer.Type.DOUBLE);
+		joint = new FastJointEnsemble<String, String>(new String[]{"Cloudy","Clear","Overcast","Sunny"}, 
+				new String[]{"Hot","Cold","Balmy","Crisp"}, jointprobability);		
+
+		assertEquals(1.0 / 8.0, joint.getProbability("Cloudy", "Hot"), 0.0);
+		assertEquals(1.0 / 32.0, joint.getProbability("Cloudy", "Crisp"), 0.0);
+		assertEquals(1.0 / 4.0, joint.getProbability("Sunny", "Hot"), 0.0);
+		assertEquals(0.0 / 8.0, joint.getProbability("Sunny", "Crisp"), 0.0);
+
+	}	
 
 	@Test
 	public void testMarginals() {
-		IEnsemble<String> marginalX = joint.marginalX();
-		IEnsemble<String> marginalY = joint.marginalY();
+		IEnsemble<String> marginalX = joint.marginalRow();
+		IEnsemble<String> marginalY = joint.marginalColumn();
+		Symbol<String> cloudy = marginalX.getSymbol("Cloudy");
+		Symbol<String> sunny = marginalX.getSymbol("Sunny");
+		Symbol<String> hot = marginalY.getSymbol("Hot");
+		Symbol<String> crisp = marginalY.getSymbol("Crisp");
+		
+		assertEquals(1.0/2.0,cloudy.getProbability(),0.0);
+		assertEquals(1.0/8.0,sunny.getProbability(),0.0);
+
+		assertEquals(1.0/4.0,hot.getProbability(),0.0);
+		assertEquals(1.0/4.0,crisp.getProbability(),0.0);
+		
+		assertEquals(7.0/4.0,marginalX.entropy(),0.0);
+		assertEquals(2.0, marginalY.entropy(),0.0);
+	}	
+	
+	@Test
+	public void testFastMarginals() {
+		DataTypeUtil.setDTypeForContext(DataBuffer.Type.DOUBLE);
+		joint = new FastJointEnsemble<String, String>(new String[]{"Cloudy","Clear","Overcast","Sunny"}, 
+				new String[]{"Hot","Cold","Balmy","Crisp"}, jointprobability);
+		IEnsemble<String> marginalX = joint.marginalRow();
+		IEnsemble<String> marginalY = joint.marginalColumn();
 		Symbol<String> cloudy = marginalX.getSymbol("Cloudy");
 		Symbol<String> sunny = marginalX.getSymbol("Sunny");
 		Symbol<String> hot = marginalY.getSymbol("Hot");
@@ -86,7 +126,9 @@ public class JointEnsembleTest {
 		
 		INDArray info = joint.shannonInformation();
 		
-		double p = joint.getProbability(cloudy, hot);
+		double p = joint.getProbability("Cloudy", "Hot");
+		
+		assertEquals(1.0/8.0,p,0.0);
 		assertEquals(informationOfOccurence(p), info.getDouble(0, 0),0.0);
 		
 		//System.out.println(info);
@@ -95,6 +137,24 @@ public class JointEnsembleTest {
 		
 	}
 
+	@Test
+	public void testFastShannon() throws SymbolNotFound {
+		DataTypeUtil.setDTypeForContext(DataBuffer.Type.DOUBLE);
+		joint = new FastJointEnsemble<String, String>(new String[]{"Cloudy","Clear","Overcast","Sunny"}, 
+				new String[]{"Hot","Cold","Balmy","Crisp"}, jointprobability);
+		
+		INDArray info = joint.shannonInformation();
+		
+		double p = joint.getProbability("Cloudy", "Hot");
+		
+		assertEquals(1.0/8.0,p,0.0);
+		assertEquals(informationOfOccurence(p), info.getDouble(0, 0),0.0);
+		
+		//System.out.println(info);
+		double entropy = joint.entropy();
+		assertEquals(27.0/8.0, entropy, 0.0);
+		
+	}
 	
 	
 	public double informationOfOccurence(double p) {

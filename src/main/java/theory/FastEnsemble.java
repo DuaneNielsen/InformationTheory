@@ -1,7 +1,6 @@
 package theory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -19,6 +18,10 @@ import org.slf4j.LoggerFactory;
  * 
  * Symbols in this ensemble can be any Comparable java object
  * 
+ * FastSymbol is designed for lazy evaluation, the design principle is that 
+ * memory and compute are not deployed unless required, but once requested
+ * results are cached so future evaluations are fast
+ * 
  * @author niedu02
  *
  * @param <T>
@@ -27,7 +30,7 @@ public class FastEnsemble<T extends Comparable<T>> implements IEnsemble<T> {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 	protected List<T> alphabet = new ArrayList<T>();
-	protected List<Symbol<T>> symbolizedAlpha = null;
+	protected Map<T,Symbol<T>> symbolizedAlpha = new HashMap<T,Symbol<T>>();;
 	
 	/** note that you will need to decide if you
 	 * want double or float precision because INDArrays
@@ -41,11 +44,13 @@ public class FastEnsemble<T extends Comparable<T>> implements IEnsemble<T> {
 	protected INDArray infoVector = null;
 	protected Double entropyOfEnsemble = null;
 
+	public FastEnsemble(T[] alphabet, INDArray probVector ) {
+		toList(alphabet);
+		this.probVector = probVector;
+	}	
+	
 	public FastEnsemble(T[] alphabet, double[] probVector ) {
-		this.alphabet = new ArrayList<T>();
-		for (T o: alphabet) {
-			this.alphabet.add(o);
-		}
+		toList(alphabet);
 		this.probVector = Nd4j.create(probVector);
 	}
 	
@@ -58,7 +63,7 @@ public class FastEnsemble<T extends Comparable<T>> implements IEnsemble<T> {
 		this.alphabet = alphabet;
 		this.probVector = probVector;
 	}
-	
+
 	public double probabilityOfOccurence(T symbol) {
 		return probVector.getDouble(0, columnOf(symbol));
 	}
@@ -86,8 +91,12 @@ public class FastEnsemble<T extends Comparable<T>> implements IEnsemble<T> {
 	}
 
 	public List<Symbol<T>> getAlphabet() {
-		lazyBuildAlphabet();
-		return symbolizedAlpha;
+		List<Symbol<T>> listOfSymbols = new ArrayList<Symbol<T>>();
+		// consider adding a second arraylist for symbols
+		for (T key: alphabet) {
+			listOfSymbols.add(getSymbol(key));
+		}
+		return listOfSymbols;
 	}
 
 	public int alphabetLength() {
@@ -95,8 +104,13 @@ public class FastEnsemble<T extends Comparable<T>> implements IEnsemble<T> {
 	}
 
 	public Symbol<T> getSymbol(T key) {
-		lazyBuildAlphabet();
-		return symbolizedAlpha.get(alphabet.indexOf(key));
+		Symbol<T> s = symbolizedAlpha.get(alphabet.indexOf(key));
+		if (s != null) return s;
+		else {
+			s = new Symbol<T>(key,probabilityOfOccurence(key));
+			symbolizedAlpha.put(key, s);
+		}
+		return s;
 	}
 	
 	private int columnOf(T key) {
@@ -105,6 +119,13 @@ public class FastEnsemble<T extends Comparable<T>> implements IEnsemble<T> {
 	
 	private int columnOf(Symbol<T> key) {
 		return alphabet.indexOf(key.getSymbol());
+	}
+	
+	private void toList(T[] alphabet) {
+		this.alphabet = new ArrayList<T>();
+		for (T o: alphabet) {
+			this.alphabet.add(o);
+		}
 	}
 	
 	private void lazyEvalInfoVector() {
@@ -118,15 +139,6 @@ public class FastEnsemble<T extends Comparable<T>> implements IEnsemble<T> {
 			INDArray logtwo = Nd4j.onesLike(probVector).mul(2.0);
 			logtwo = Transforms.log(logtwo);
 			infoVector.divi(logtwo);
-		}
-	}
-	
-	private void lazyBuildAlphabet(){
-		if  ( symbolizedAlpha == null ) {
-			symbolizedAlpha = new ArrayList<Symbol<T>>();
-			for (T o: alphabet) {
-				symbolizedAlpha.add(new Symbol<T>(o,probabilityOfOccurence(o)));
-			}
 		}
 	}
 	

@@ -8,7 +8,7 @@ import org.nd4j.linalg.indexing.BooleanIndexing;
 import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
-public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> {
+public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> implements IJointEnsemble<X, Y> {
 
 	INDArray jointprob;
 	INDArray marginalX;
@@ -26,9 +26,6 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> {
 
 		INDArray marginalX = jointprob.sum(0);
 		INDArray marginalY = jointprob.sum(1);
-		System.out.println(y.size());
-		System.out.println(marginalY.rows());
-		System.out.println(marginalY);
 		assert (marginalX.columns() == x.size());
 		assert (marginalY.rows() == y.size());
 		
@@ -54,17 +51,24 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> {
 		}		
 	}
 
-	public IEnsemble<X> marginalX() {
+	/* (non-Javadoc)
+	 * @see theory.IJointEnsemble#marginalX()
+	 */
+	public IEnsemble<X> marginalRow() {
 		IEnsemble<X> ensemble = null;
 		try {
-			ensemble = new Ensemble<X>(new Random(), x);
+			
+			ensemble = new Ensemble<X>(new Random(),x);
 		} catch (NotAProbabilityDistribution e) {
 			e.printStackTrace();
 		}
 		return ensemble;
 	}
 	
-	public IEnsemble<Y> marginalY() {
+	/* (non-Javadoc)
+	 * @see theory.IJointEnsemble#marginalY()
+	 */
+	public IEnsemble<Y> marginalColumn() {
 		IEnsemble<Y> ensemble = null;
 		try {
 			ensemble = new Ensemble<Y>(new Random(), y);
@@ -74,29 +78,39 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> {
 		return ensemble;
 	}
 	
+	/* (non-Javadoc)
+	 * @see theory.IJointEnsemble#getSymbolX(X)
+	 */
 	public Symbol<X> getSymbolX(X symbol) throws SymbolNotFound {
 		Symbol<X> x = xmap.get(symbol);
 		if (x == null) throw new SymbolNotFound();
 		return x;	
 	}
 
+	/* (non-Javadoc)
+	 * @see theory.IJointEnsemble#getSymbolY(Y)
+	 */
 	public Symbol<Y> getSymbolY(Y symbol) throws SymbolNotFound {
 		Symbol<Y> y = ymap.get(symbol);
 		if (y == null) throw new SymbolNotFound();
 		return y;
 	}
 	
-	public double getProbability(Symbol<X> sx, Symbol<Y> sy) {
-		int column = this.x.indexOf(sx);
-		int row = this.y.indexOf(sy);
+	/* (non-Javadoc)
+	 * @see theory.IJointEnsemble#getProbability(theory.Symbol, theory.Symbol)
+	 */
+	public double getProbability(X sx, Y sy) {
+		int row = this.x.indexOf(xmap.get(sx));
+		int column = this.y.indexOf(ymap.get(sy));
 		return jointprob.getDouble(row, column);
 	}
 	
+	/* (non-Javadoc)
+	 * @see theory.IJointEnsemble#entropy()
+	 */
 	public double entropy() {
 		INDArray info = shannonInformation();
-		System.out.println(info);
 		INDArray entropy = jointprob.mul(info);
-		System.out.println(entropy);
 		return entropy.sumNumber().doubleValue();
 	}
 	

@@ -2,6 +2,7 @@ package theory.tests;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
 import java.util.Random;
 
 import org.junit.Test;
@@ -13,6 +14,7 @@ import theory.EnsembleOld;
 import theory.FastEnsemble;
 import theory.IEnsemble;
 import theory.NotAProbabilityDistribution;
+import theory.Symbol;
 
 public class EnsembleTest {
 
@@ -76,7 +78,22 @@ public class EnsembleTest {
 		
 		double shannonEntropy = bentCoin.entropy();
 		assertEquals(0.465, shannonEntropy, 0.01 );
-
+		
+		
+		String[] alphabetical = {"a","b","c","d"};
+		double[] probs = {0.7,0.1,0.1,0.1};
+		
+		IEnsemble<String> alpha = new FastEnsemble<String>(alphabetical, probs);	
+		
+		List<Symbol<String>> list = alpha.getAlphabet();
+		
+		int i = 0;
+		for (Symbol<String> s: list) {
+			assertEquals(alphabetical[i],s.getSymbol());
+			i++;
+		}
+		
+		
 	}		
 	
 }
