@@ -182,14 +182,14 @@ public class JointEnsembleTest {
 		//assertEquals(11.0/8.0, (Double)fastjoint.entropyColumnConditionalRowFast(), 0.0);
 		assertEquals(13.0/8.0, (Double)fastjoint.entropyRowConditionalColumn(), 0.0);
 		//assertEquals(13.0/8.0, (Double)fastjoint.entropyRowConditionalColumnFast(), 0.0);
-		
+		assertEquals(3.0/8.0, (Double)fastjoint.getMutualInformationByColumn(), 0.0);
+		assertEquals(3.0/8.0, (Double)fastjoint.getMutualInformationByRow(), 0.0);	
 	}
 	
 	public double informationOfOccurence(double p) {
 		Log log = new Log();
 		double info =  log.value((1.0)/p) /log.value(2);
 		if (Double.isFinite(info)) {return info;} else {return (double)0.0;}
-	}
-	
+	}	
 	
 }

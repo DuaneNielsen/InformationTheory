@@ -128,7 +128,16 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 		INDArray conditionalEntropyRowVector = information.muli(conditionalprobs).sum(0);
 		return conditionalEntropyRowVector.mulRowVector(marginalprobRowVector).sumNumber().doubleValue();
 	}
+	
+	public Number getMutualInformationByRow() {
+		return marginalRow().entropy() - entropyRowConditionalColumn();
+	}
 
+	public Number getMutualInformationByColumn() {
+		return marginalColumn().entropy() - entropyColumnConditionalRow();
+	}
+
+	
 	private void lazyEvalShannonInformation() {
 		if (information == null) {
 			// 1/log(p) = -log(p)
@@ -154,10 +163,6 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 		logtwo = Transforms.log(logtwo);
 		information.divi(logtwo);
 		return information;
-	}	
-
-	public Number getMutualInformation() {
-		return null;
 	}
 
 	private int getRow(ROW row) {
@@ -167,5 +172,7 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 	private int getColumn(COLUMN column) {
 		return columns.indexOf(column);
 	}
+	
+	
 
 }
