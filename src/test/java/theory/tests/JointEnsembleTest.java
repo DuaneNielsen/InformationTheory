@@ -55,10 +55,10 @@ public class JointEnsembleTest {
 	@Test
 	public void testJointEnsemble() throws SymbolNotFound {
 
-		Symbol<String> cloudy = joint.getSymbolX("Cloudy");
-		Symbol<String> sunny = joint.getSymbolX("Sunny");
-		Symbol<String> hot = joint.getSymbolY("Hot");
-		Symbol<String> crisp = joint.getSymbolY("Crisp");
+		Symbol<String> cloudy = joint.getSymbolRow("Cloudy");
+		Symbol<String> sunny = joint.getSymbolRow("Sunny");
+		Symbol<String> hot = joint.getSymbolColumn("Hot");
+		Symbol<String> crisp = joint.getSymbolColumn("Crisp");
 
 		assertEquals(1.0 / 8.0, joint.getProbability("Cloudy", "Hot"), 0.0);
 		assertEquals(1.0 / 32.0, joint.getProbability("Cloudy", "Crisp"), 0.0);
@@ -124,10 +124,10 @@ public class JointEnsembleTest {
 	
 	@Test
 	public void testShannon() throws SymbolNotFound {
-		Symbol<String> cloudy = joint.getSymbolX("Cloudy");
-		Symbol<String> sunny = joint.getSymbolX("Sunny");
-		Symbol<String> hot = joint.getSymbolY("Hot");
-		Symbol<String> crisp = joint.getSymbolY("Crisp");
+		Symbol<String> cloudy = joint.getSymbolRow("Cloudy");
+		Symbol<String> sunny = joint.getSymbolRow("Sunny");
+		Symbol<String> hot = joint.getSymbolColumn("Hot");
+		Symbol<String> crisp = joint.getSymbolColumn("Crisp");
 		
 		INDArray info = joint.shannonInformation();
 		
@@ -174,6 +174,16 @@ public class JointEnsembleTest {
 		assertEquals(1.0/8.0,fastjoint.conditionalOnRow("Clear").probabilityOfOccurence("Crisp"),0.0);
 	}
 	
+	@Test
+	public void conditionalEntropy() {
+		
+		assertEquals(7.0/4.0, fastjoint.conditionalOnRow("Cloudy").entropy(), 0.0 );
+		assertEquals(11.0/8.0, (Double)fastjoint.entropyColumnConditionalRow(), 0.0);
+		//assertEquals(11.0/8.0, (Double)fastjoint.entropyColumnConditionalRowFast(), 0.0);
+		assertEquals(13.0/8.0, (Double)fastjoint.entropyRowConditionalColumn(), 0.0);
+		//assertEquals(13.0/8.0, (Double)fastjoint.entropyRowConditionalColumnFast(), 0.0);
+		
+	}
 	
 	public double informationOfOccurence(double p) {
 		Log log = new Log();

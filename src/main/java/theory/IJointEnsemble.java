@@ -8,9 +8,9 @@ public interface IJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Comp
 
 	IEnsemble<COLUMN> marginalColumn();
 
-	Symbol<ROW> getSymbolX(ROW row) throws SymbolNotFound;
+	Symbol<ROW> getSymbolRow(ROW row) throws SymbolNotFound;
 
-	Symbol<COLUMN> getSymbolY(COLUMN column) throws SymbolNotFound;
+	Symbol<COLUMN> getSymbolColumn(COLUMN column) throws SymbolNotFound;
 
 	double getProbability(ROW row, COLUMN column);
 

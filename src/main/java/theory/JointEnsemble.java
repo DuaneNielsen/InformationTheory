@@ -81,7 +81,7 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> imp
 	/* (non-Javadoc)
 	 * @see theory.IJointEnsemble#getSymbolX(X)
 	 */
-	public Symbol<X> getSymbolX(X symbol) throws SymbolNotFound {
+	public Symbol<X> getSymbolRow(X symbol) throws SymbolNotFound {
 		Symbol<X> x = xmap.get(symbol);
 		if (x == null) throw new SymbolNotFound();
 		return x;	
@@ -90,7 +90,7 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> imp
 	/* (non-Javadoc)
 	 * @see theory.IJointEnsemble#getSymbolY(Y)
 	 */
-	public Symbol<Y> getSymbolY(Y symbol) throws SymbolNotFound {
+	public Symbol<Y> getSymbolColumn(Y symbol) throws SymbolNotFound {
 		Symbol<Y> y = ymap.get(symbol);
 		if (y == null) throw new SymbolNotFound();
 		return y;
