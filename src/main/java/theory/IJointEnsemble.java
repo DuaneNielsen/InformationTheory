@@ -17,5 +17,9 @@ public interface IJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Comp
 	double entropy();
 
 	INDArray shannonInformation();
+	
+	public IEnsemble<COLUMN> conditionalOnRow(ROW symbol);
+	
+	public IEnsemble<ROW> conditionalOnColumn(COLUMN symbol);
 
 }

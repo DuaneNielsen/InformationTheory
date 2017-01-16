@@ -130,5 +130,15 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> imp
 		logprob.divi(logtwo);
 		return logprob;
 	}
+
+	public IEnsemble<Y> conditionalOnRow(X symbol) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IEnsemble<X> conditionalOnColumn(Y symbol) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
