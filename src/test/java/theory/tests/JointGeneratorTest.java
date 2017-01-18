@@ -84,10 +84,10 @@ public class JointGeneratorTest {
 			if (pair.equals(s_d_4)) d_4++;
 		}
 
-		assertEquals(fastjoint.getProbability(a.getSymbol(), _4.getSymbol()), (double)a_1/(double)num_trials,0.01);
-		assertEquals(fastjoint.getProbability(a.getSymbol(), _1.getSymbol()), (double)a_4/(double)num_trials,0.01);
-		assertEquals(fastjoint.getProbability(d.getSymbol(), _4.getSymbol()), (double)d_1/(double)num_trials,0.01);
-		assertEquals(fastjoint.getProbability(d.getSymbol(), _1.getSymbol()), (double)d_4/(double)num_trials,0.01);
+		assertEquals(fastjoint.getProbability(a.getSymbol(), _1.getSymbol()), (double)a_1/(double)num_trials,0.01);
+		assertEquals(fastjoint.getProbability(a.getSymbol(), _4.getSymbol()), (double)a_4/(double)num_trials,0.01);
+		assertEquals(fastjoint.getProbability(d.getSymbol(), _1.getSymbol()), (double)d_1/(double)num_trials,0.01);
+		assertEquals(fastjoint.getProbability(d.getSymbol(), _4.getSymbol()), (double)d_4/(double)num_trials,0.01);
 		
 	}
 

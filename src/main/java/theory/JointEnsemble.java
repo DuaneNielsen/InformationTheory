@@ -140,5 +140,15 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> imp
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public int rowLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int columnLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

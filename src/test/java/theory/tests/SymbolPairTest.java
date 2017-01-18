@@ -34,5 +34,5 @@ public class SymbolPairTest {
 		assertFalse(s_a_1.equals(s_a_4));
 		assertTrue(s_a_1.equals(new SymbolPair<String,String>(new Symbol<String>("a"), new Symbol<String>("_1"))));
 	}
-
+	
 }

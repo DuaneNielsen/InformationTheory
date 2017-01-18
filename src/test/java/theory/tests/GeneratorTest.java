@@ -19,8 +19,8 @@ public class GeneratorTest {
 
 	@Test
 	public void test() {
-		String[] coin = {"0","1"};
-		double[] distrib = {0.5,0.5};
+		String[] coin = {"0","1","2","3"};
+		double[] distrib = {0.25,0.25,0.25,0.25};
 		
 		DataTypeUtil.setDTypeForContext(DataBuffer.Type.DOUBLE);
 		IEnsemble<String> bentCoin = new FastEnsemble<String>(coin, distrib);
@@ -35,7 +35,10 @@ public class GeneratorTest {
 			if (s.getSymbol() == "0") {
 				count0++;
 			}
-			else count1++;
+			if (s.getSymbol() == "1") {
+				count1++;
+			}
+
 		}
 		
 		assertEquals(distrib[0],(double)count0/(double)number_trials,0.01 );

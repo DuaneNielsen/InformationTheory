@@ -14,7 +14,7 @@ public class NaiveEnsembleGenerator<T extends Comparable<T>> {
 		this.ensemble = ensemble;
 		double position = 0.0;
 		for (Symbol<T> s : ensemble.getAlphabet()) {
-			position =+ s.getProbability();
+			position = position + s.getProbability();
 			interval.add(position);
 		}
 	}
@@ -31,5 +31,14 @@ public class NaiveEnsembleGenerator<T extends Comparable<T>> {
 		return s;
 	}
 	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		
+		for (Double inter : interval ) {
+			sb.append(inter).append(" ");
+		}
+		
+		return sb.toString();
+	}
 	
 }

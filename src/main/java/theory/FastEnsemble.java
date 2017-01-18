@@ -142,4 +142,8 @@ public class FastEnsemble<T extends Comparable<T>> implements IEnsemble<T> {
 		}
 	}
 	
+	public String toString() {
+		return probVector.toString();
+	}
+	
 }

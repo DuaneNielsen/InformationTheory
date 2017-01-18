@@ -18,8 +18,8 @@ public class NaiveJointEnsembleGenerator<ROW extends Comparable<ROW>, COLUMN ext
 	
 	public SymbolPair<ROW,COLUMN> generateRandom() {
 		Symbol<ROW> row = this.rowGenerator.generateRandom();
-		IEnsemble<COLUMN> marginalColumn = jointEnsemble.conditionalOnRow(row.getSymbol());
-		NaiveEnsembleGenerator<COLUMN> genC = new NaiveEnsembleGenerator<COLUMN>(randomColumn, marginalColumn);
+		IEnsemble<COLUMN> condiationalColumn = jointEnsemble.conditionalOnRow(row.getSymbol());
+		NaiveEnsembleGenerator<COLUMN> genC = new NaiveEnsembleGenerator<COLUMN>(randomColumn, condiationalColumn);
 		return new SymbolPair<ROW,COLUMN>(row,genC.generateRandom());
 	}
 	

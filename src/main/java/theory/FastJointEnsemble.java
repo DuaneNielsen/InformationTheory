@@ -137,6 +137,13 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 		return marginalColumn().entropy() - entropyColumnConditionalRow();
 	}
 
+	public int rowLength() {
+		return rows.size();
+	}
+	
+	public int columnLength(){
+		return columns.size();
+	}
 	
 	private void lazyEvalShannonInformation() {
 		if (information == null) {
@@ -173,6 +180,9 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 		return columns.indexOf(column);
 	}
 	
+	public String toString() {
+		return jointprob.toString();
+	}
 	
 
 }

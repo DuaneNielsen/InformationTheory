@@ -21,5 +21,8 @@ public interface IJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Comp
 	public IEnsemble<COLUMN> conditionalOnRow(ROW symbol);
 	
 	public IEnsemble<ROW> conditionalOnColumn(COLUMN symbol);
-
+	
+	public int rowLength();
+	public int columnLength();
+	
 }
