@@ -78,6 +78,7 @@ public class JointEnsembleTest {
 		assertEquals(1.0 / 32.0, joint.getProbability("Cloudy", "Crisp"), 0.0);
 		assertEquals(1.0 / 4.0, joint.getProbability("Sunny", "Hot"), 0.0);
 		assertEquals(0.0 / 8.0, joint.getProbability("Sunny", "Crisp"), 0.0);
+		assertTrue(joint.isAValidProbabilityDistribution(0.00001));
 
 	}	
 

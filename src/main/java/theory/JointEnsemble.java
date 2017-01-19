@@ -150,5 +150,10 @@ public class JointEnsemble<X extends Comparable<X>, Y extends Comparable<Y>> imp
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	public boolean isAValidProbabilityDistribution(double error) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

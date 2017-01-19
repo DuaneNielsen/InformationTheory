@@ -17,6 +17,8 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 	protected FastEnsemble<COLUMN> marginalColumn = null;
 	protected List<ROW> rows = new ArrayList<ROW>();
 	protected List<COLUMN> columns = new ArrayList<COLUMN>();
+	public boolean isValid = false;
+	protected double probabilityMaxError = 0.01;
 
 	public FastJointEnsemble(ROW[] rows, COLUMN[] columns, double[][] probabilities) {
 		for (ROW symbol : rows) {
@@ -26,18 +28,21 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 			this.columns.add(symbol);
 		}
 		this.jointprob = Nd4j.create(probabilities);
+		this.isValid = isAValidProbabilityDistribution(probabilityMaxError);
 	}
 
 	public FastJointEnsemble(List<ROW> rows, List<COLUMN> columns, double[][] probabilities) {
 		this.rows = rows;
 		this.columns = columns;
 		this.jointprob = Nd4j.create(probabilities);
+		this.isValid = isAValidProbabilityDistribution(probabilityMaxError);
 	}
 
 	public FastJointEnsemble(List<ROW> rows, List<COLUMN> columns, INDArray probabilities) {
 		this.rows = rows;
 		this.columns = columns;
 		this.jointprob = probabilities;
+		this.isValid = isAValidProbabilityDistribution(probabilityMaxError);
 	}
 
 	public IEnsemble<ROW> marginalRow() {
@@ -183,6 +188,15 @@ public class FastJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Compa
 	public String toString() {
 		return jointprob.toString();
 	}
-	
+
+	/**
+	 * Checks that the 
+	 * @param error
+	 * @return
+	 */
+	public boolean isAValidProbabilityDistribution(double error) {
+		double sum = jointprob.sumNumber().doubleValue();
+		return ( Math.abs(1.0 - sum) < error );
+	}
 
 }

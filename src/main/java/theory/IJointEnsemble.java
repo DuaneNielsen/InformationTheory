@@ -25,4 +25,11 @@ public interface IJointEnsemble<ROW extends Comparable<ROW>, COLUMN extends Comp
 	public int rowLength();
 	public int columnLength();
 	
+	/**
+	 * returns true if the total probability of all events is equal 1.0 +/- error 
+	 * @param error
+	 * @return
+	 */
+	public boolean isAValidProbabilityDistribution(double error);
+	
 }
