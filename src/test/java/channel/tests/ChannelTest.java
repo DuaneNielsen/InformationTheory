@@ -88,5 +88,29 @@ public class ChannelTest {
 		assertEquals(1.0, resultSet.rate, 0.01);
 	}		
 	
+	@Test
+	public void runQuantizedBentCoinEnsemble() throws NotAProbabilityDistribution {
+		
+		System.out.println("Running Bent Coin Using Ensemble");
+		
+		Driver driver = new Driver();
+		
+
+		// set up a bent coin using generic Ensemble notation
+		String[] coin = {"0","1"};  // alphabet
+		double[] distrib = {0.5,0.5}; // distribution
+		EnsembleOld<String> bentCoin = new EnsembleOld<String>(new Random(), coin, distrib);
+		
+		driver.generator = bentCoin;
+		driver.channel = new BinaryChannel(0.0);
+		driver.encoder = QuantizerFactory.twoBit().getEncoder();
+		driver.decoder = QuantizerFactory.twoBit().getDecoder();
+		ResultSet resultSet = driver.run(1000, 30);
+		System.out.println(resultSet);
+		
+		assertEquals(0.25, resultSet.errorRate, 0.05);
+		assertEquals(2.0, resultSet.rate, 0.01);
+	}	
+	
 	
 }
